@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>frames</key>
+	<dict>
+		<key>ball.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{1, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>diamond.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{34, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 2}, {32, 30}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>marbleblue.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{67, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>movable.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{100, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>plos_marble.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{133, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>trampoline01.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{166, 1}, {64, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {64, 32}}</string>
+			<key>sourceSize</key>
+			<string>{64, 32}</string>
+		</dict>
+		<key>trampoline02.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{231, 1}, {64, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {64, 32}}</string>
+			<key>sourceSize</key>
+			<string>{64, 32}</string>
+		</dict>
+		<key>trampoline03.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{296, 1}, {64, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {64, 32}}</string>
+			<key>sourceSize</key>
+			<string>{64, 32}</string>
+		</dict>
+		<key>vytah01.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{361, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>vytah02.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{394, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>vytah03.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{427, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>xmagnet.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{460, 1}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>xspeed.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{1, 34}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{2, 0}, {27, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>xzbackground.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{34, 34}, {32, 32}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{0, 0}, {32, 32}}</string>
+			<key>sourceSize</key>
+			<string>{32, 32}</string>
+		</dict>
+		<key>zexit.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{67, 34}, {64, 64}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{1, 3}, {62, 59}}</string>
+			<key>sourceSize</key>
+			<string>{64, 64}</string>
+		</dict>
+		<key>zspeed.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{132, 34}, {64, 64}}</string>
+			<key>offset</key>
+			<string>{0, 0}</string>
+			<key>sourceColorRect</key>
+			<string>{{10, 10}, {44, 44}}</string>
+			<key>sourceSize</key>
+			<string>{64, 64}</string>
+		</dict>
+	</dict>
+	<key>metadata</key>
+	<dict>
+		<key>format</key>
+		<integer>1</integer>
+		<key>size</key>
+		<string>{512, 128}</string>
+	</dict>
+</dict>
+</plist>

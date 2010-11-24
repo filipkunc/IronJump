@@ -1,0 +1,536 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A7037CF8123FEB0E00B39ED6 /* DocumentBIN.icns in Resources */ = {isa = PBXBuildFile; fileRef = A7037CF6123FEB0E00B39ED6 /* DocumentBIN.icns */; };
+		A7037CF9123FEB0E00B39ED6 /* DocumentXML.icns in Resources */ = {isa = PBXBuildFile; fileRef = A7037CF7123FEB0E00B39ED6 /* DocumentXML.icns */; };
+		A7260B32124005A90092B658 /* FPXMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7260B31124005A90092B658 /* FPXMLWriter.m */; };
+		A72D68321205ED8800BF908F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A72D68311205ED8800BF908F /* Cocoa.framework */; };
+		A72D68371205ED8800BF908F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A72D68351205ED8800BF908F /* InfoPlist.strings */; };
+		A72D68391205ED8800BF908F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D68381205ED8800BF908F /* main.m */; };
+		A72D683C1205ED8800BF908F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A72D683A1205ED8800BF908F /* MainMenu.xib */; };
+		A72D68421205ED8800BF908F /* MyDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = A72D68411205ED8800BF908F /* MyDocument.m */; };
+		A72D68451205ED8800BF908F /* MyDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = A72D68431205ED8800BF908F /* MyDocument.xib */; };
+		A72F887F120DBE92004DFB84 /* FPReplay.m in Sources */ = {isa = PBXBuildFile; fileRef = A72F887E120DBE92004DFB84 /* FPReplay.m */; };
+		A7553204120602B6006F4D3E /* IronJump.icns in Resources */ = {isa = PBXBuildFile; fileRef = A7553203120602B6006F4D3E /* IronJump.icns */; };
+		A79C2A051205F4050021714D /* FPDiamond.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29E31205F4050021714D /* FPDiamond.m */; };
+		A79C2A061205F4050021714D /* FPElevator.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29E51205F4050021714D /* FPElevator.m */; };
+		A79C2A071205F4050021714D /* FPExit.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29E71205F4050021714D /* FPExit.m */; };
+		A79C2A081205F4050021714D /* FPFont.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29E91205F4050021714D /* FPFont.m */; };
+		A79C2A091205F4050021714D /* FPGame.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29EB1205F4050021714D /* FPGame.m */; };
+		A79C2A0A1205F4050021714D /* FPGameAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29ED1205F4050021714D /* FPGameAtlas.m */; };
+		A79C2A0B1205F4050021714D /* FPGraphics.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29F01205F4050021714D /* FPGraphics.m */; };
+		A79C2A0C1205F4050021714D /* FPMagnet.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29F21205F4050021714D /* FPMagnet.m */; };
+		A79C2A0D1205F4050021714D /* FPMath.c in Sources */ = {isa = PBXBuildFile; fileRef = A79C29F31205F4050021714D /* FPMath.c */; };
+		A79C2A0E1205F4050021714D /* FPMovablePlatform.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29F61205F4050021714D /* FPMovablePlatform.m */; };
+		A79C2A0F1205F4050021714D /* FPPlatform.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29F81205F4050021714D /* FPPlatform.m */; };
+		A79C2A101205F4050021714D /* FPPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29FA1205F4050021714D /* FPPlayer.m */; };
+		A79C2A111205F4050021714D /* FPSpeedPowerUp.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29FC1205F4050021714D /* FPSpeedPowerUp.m */; };
+		A79C2A121205F4050021714D /* FPTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C29FE1205F4050021714D /* FPTexture.m */; };
+		A79C2A131205F4050021714D /* FPTextureArray.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2A001205F4050021714D /* FPTextureArray.m */; };
+		A79C2A141205F4050021714D /* FPTextureAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2A021205F4050021714D /* FPTextureAtlas.m */; };
+		A79C2A151205F4050021714D /* FPTrampoline.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2A041205F4050021714D /* FPTrampoline.m */; };
+		A79C2A9A1205F4810021714D /* AndaleMono.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A891205F4810021714D /* AndaleMono.png */; };
+		A79C2A9B1205F4810021714D /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8A1205F4810021714D /* ball.png */; };
+		A79C2A9C1205F4810021714D /* diamond.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8B1205F4810021714D /* diamond.png */; };
+		A79C2A9D1205F4810021714D /* exit.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8C1205F4810021714D /* exit.png */; };
+		A79C2A9E1205F4810021714D /* jump.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8D1205F4810021714D /* jump.png */; };
+		A79C2A9F1205F4810021714D /* magnet.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8E1205F4810021714D /* magnet.png */; };
+		A79C2AA01205F4810021714D /* marbleblue.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A8F1205F4810021714D /* marbleblue.png */; };
+		A79C2AA11205F4810021714D /* movable.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A901205F4810021714D /* movable.png */; };
+		A79C2AA21205F4810021714D /* plos_marble.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A911205F4810021714D /* plos_marble.png */; };
+		A79C2AA31205F4810021714D /* speed.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A921205F4810021714D /* speed.png */; };
+		A79C2AA41205F4810021714D /* speed_symbol.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A931205F4810021714D /* speed_symbol.png */; };
+		A79C2AA51205F4810021714D /* trampoline01.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A941205F4810021714D /* trampoline01.png */; };
+		A79C2AA61205F4810021714D /* trampoline02.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A951205F4810021714D /* trampoline02.png */; };
+		A79C2AA71205F4810021714D /* trampoline03.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A961205F4810021714D /* trampoline03.png */; };
+		A79C2AA81205F4810021714D /* vytah01.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A971205F4810021714D /* vytah01.png */; };
+		A79C2AA91205F4810021714D /* vytah02.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A981205F4810021714D /* vytah02.png */; };
+		A79C2AAA1205F4810021714D /* vytah03.png in Resources */ = {isa = PBXBuildFile; fileRef = A79C2A991205F4810021714D /* vytah03.png */; };
+		A79C2AF01205F6070021714D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79C2AEF1205F6070021714D /* OpenGL.framework */; };
+		A79C2AFA1205F6370021714D /* FPFactoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2AF31205F6370021714D /* FPFactoryView.m */; };
+		A79C2AFB1205F6370021714D /* FPGameView.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2AF51205F6370021714D /* FPGameView.m */; };
+		A79C2AFC1205F6370021714D /* FPLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2AF71205F6370021714D /* FPLevelView.m */; };
+		A79C2AFD1205F6370021714D /* NSOpenGLView+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = A79C2AF91205F6370021714D /* NSOpenGLView+Helpers.m */; };
+		A7B707E81216EE9E005589C5 /* FPStage.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B707E71216EE9E005589C5 /* FPStage.m */; };
+		A7FA0E74124146DE00646F11 /* FPXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A7FA0E73124146DE00646F11 /* FPXMLParser.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A7037CF6123FEB0E00B39ED6 /* DocumentBIN.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DocumentBIN.icns; sourceTree = "<group>"; };
+		A7037CF7123FEB0E00B39ED6 /* DocumentXML.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DocumentXML.icns; sourceTree = "<group>"; };
+		A7260B30124005A90092B658 /* FPXMLWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPXMLWriter.h; sourceTree = "<group>"; };
+		A7260B31124005A90092B658 /* FPXMLWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPXMLWriter.m; sourceTree = "<group>"; };
+		A72D682E1205ED8800BF908F /* IronJumpLevelEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IronJumpLevelEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A72D68311205ED8800BF908F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A72D68331205ED8800BF908F /* IronJumpLevelEditor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IronJumpLevelEditor-Info.plist"; sourceTree = "<group>"; };
+		A72D68341205ED8800BF908F /* IronJumpLevelEditor_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IronJumpLevelEditor_Prefix.pch; sourceTree = "<group>"; };
+		A72D68361205ED8800BF908F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A72D68381205ED8800BF908F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A72D683B1205ED8800BF908F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A72D68401205ED8800BF908F /* MyDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyDocument.h; sourceTree = "<group>"; };
+		A72D68411205ED8800BF908F /* MyDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyDocument.m; sourceTree = "<group>"; };
+		A72D68441205ED8800BF908F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MyDocument.xib; sourceTree = "<group>"; };
+		A72F887D120DBE92004DFB84 /* FPReplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPReplay.h; sourceTree = "<group>"; };
+		A72F887E120DBE92004DFB84 /* FPReplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPReplay.m; sourceTree = "<group>"; };
+		A7553203120602B6006F4D3E /* IronJump.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = IronJump.icns; sourceTree = "<group>"; };
+		A79C29E21205F4050021714D /* FPDiamond.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPDiamond.h; sourceTree = "<group>"; };
+		A79C29E31205F4050021714D /* FPDiamond.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPDiamond.m; sourceTree = "<group>"; };
+		A79C29E41205F4050021714D /* FPElevator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPElevator.h; sourceTree = "<group>"; };
+		A79C29E51205F4050021714D /* FPElevator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPElevator.m; sourceTree = "<group>"; };
+		A79C29E61205F4050021714D /* FPExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPExit.h; sourceTree = "<group>"; };
+		A79C29E71205F4050021714D /* FPExit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPExit.m; sourceTree = "<group>"; };
+		A79C29E81205F4050021714D /* FPFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPFont.h; sourceTree = "<group>"; };
+		A79C29E91205F4050021714D /* FPFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPFont.m; sourceTree = "<group>"; };
+		A79C29EA1205F4050021714D /* FPGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPGame.h; sourceTree = "<group>"; };
+		A79C29EB1205F4050021714D /* FPGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPGame.m; sourceTree = "<group>"; };
+		A79C29EC1205F4050021714D /* FPGameAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPGameAtlas.h; sourceTree = "<group>"; };
+		A79C29ED1205F4050021714D /* FPGameAtlas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPGameAtlas.m; sourceTree = "<group>"; };
+		A79C29EE1205F4050021714D /* FPGameProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPGameProtocols.h; sourceTree = "<group>"; };
+		A79C29EF1205F4050021714D /* FPGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPGraphics.h; sourceTree = "<group>"; };
+		A79C29F01205F4050021714D /* FPGraphics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPGraphics.m; sourceTree = "<group>"; };
+		A79C29F11205F4050021714D /* FPMagnet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPMagnet.h; sourceTree = "<group>"; };
+		A79C29F21205F4050021714D /* FPMagnet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPMagnet.m; sourceTree = "<group>"; };
+		A79C29F31205F4050021714D /* FPMath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = FPMath.c; sourceTree = "<group>"; };
+		A79C29F41205F4050021714D /* FPMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPMath.h; sourceTree = "<group>"; };
+		A79C29F51205F4050021714D /* FPMovablePlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPMovablePlatform.h; sourceTree = "<group>"; };
+		A79C29F61205F4050021714D /* FPMovablePlatform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPMovablePlatform.m; sourceTree = "<group>"; };
+		A79C29F71205F4050021714D /* FPPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPPlatform.h; sourceTree = "<group>"; };
+		A79C29F81205F4050021714D /* FPPlatform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPPlatform.m; sourceTree = "<group>"; };
+		A79C29F91205F4050021714D /* FPPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPPlayer.h; sourceTree = "<group>"; };
+		A79C29FA1205F4050021714D /* FPPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPPlayer.m; sourceTree = "<group>"; };
+		A79C29FB1205F4050021714D /* FPSpeedPowerUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPSpeedPowerUp.h; sourceTree = "<group>"; };
+		A79C29FC1205F4050021714D /* FPSpeedPowerUp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPSpeedPowerUp.m; sourceTree = "<group>"; };
+		A79C29FD1205F4050021714D /* FPTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTexture.h; sourceTree = "<group>"; };
+		A79C29FE1205F4050021714D /* FPTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPTexture.m; sourceTree = "<group>"; };
+		A79C29FF1205F4050021714D /* FPTextureArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FPTextureArray.h; sourceTree = "<group>"; };
+		A79C2A001205F4050021714D /* FPTextureArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FPTextureArray.m; sourceTree = "<group>"; };
+		A79C2A011205F4050021714D /* FPTextureAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTextureAtlas.h; sourceTree = "<group>"; };
+		A79C2A021205F4050021714D /* FPTextureAtlas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPTextureAtlas.m; sourceTree = "<group>"; };
+		A79C2A031205F4050021714D /* FPTrampoline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPTrampoline.h; sourceTree = "<group>"; };
+		A79C2A041205F4050021714D /* FPTrampoline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPTrampoline.m; sourceTree = "<group>"; };
+		A79C2A891205F4810021714D /* AndaleMono.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AndaleMono.png; sourceTree = "<group>"; };
+		A79C2A8A1205F4810021714D /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ball.png; sourceTree = "<group>"; };
+		A79C2A8B1205F4810021714D /* diamond.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = diamond.png; sourceTree = "<group>"; };
+		A79C2A8C1205F4810021714D /* exit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exit.png; sourceTree = "<group>"; };
+		A79C2A8D1205F4810021714D /* jump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = jump.png; sourceTree = "<group>"; };
+		A79C2A8E1205F4810021714D /* magnet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magnet.png; sourceTree = "<group>"; };
+		A79C2A8F1205F4810021714D /* marbleblue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = marbleblue.png; sourceTree = "<group>"; };
+		A79C2A901205F4810021714D /* movable.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = movable.png; sourceTree = "<group>"; };
+		A79C2A911205F4810021714D /* plos_marble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = plos_marble.png; sourceTree = "<group>"; };
+		A79C2A921205F4810021714D /* speed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = speed.png; sourceTree = "<group>"; };
+		A79C2A931205F4810021714D /* speed_symbol.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = speed_symbol.png; sourceTree = "<group>"; };
+		A79C2A941205F4810021714D /* trampoline01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trampoline01.png; sourceTree = "<group>"; };
+		A79C2A951205F4810021714D /* trampoline02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trampoline02.png; sourceTree = "<group>"; };
+		A79C2A961205F4810021714D /* trampoline03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trampoline03.png; sourceTree = "<group>"; };
+		A79C2A971205F4810021714D /* vytah01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vytah01.png; sourceTree = "<group>"; };
+		A79C2A981205F4810021714D /* vytah02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vytah02.png; sourceTree = "<group>"; };
+		A79C2A991205F4810021714D /* vytah03.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = vytah03.png; sourceTree = "<group>"; };
+		A79C2AEF1205F6070021714D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		A79C2AF21205F6370021714D /* FPFactoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPFactoryView.h; sourceTree = "<group>"; };
+		A79C2AF31205F6370021714D /* FPFactoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPFactoryView.m; sourceTree = "<group>"; };
+		A79C2AF41205F6370021714D /* FPGameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPGameView.h; sourceTree = "<group>"; };
+		A79C2AF51205F6370021714D /* FPGameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPGameView.m; sourceTree = "<group>"; };
+		A79C2AF61205F6370021714D /* FPLevelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPLevelView.h; sourceTree = "<group>"; };
+		A79C2AF71205F6370021714D /* FPLevelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPLevelView.m; sourceTree = "<group>"; };
+		A79C2AF81205F6370021714D /* NSOpenGLView+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOpenGLView+Helpers.h"; sourceTree = "<group>"; };
+		A79C2AF91205F6370021714D /* NSOpenGLView+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOpenGLView+Helpers.m"; sourceTree = "<group>"; };
+		A7B707E61216EE9E005589C5 /* FPStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPStage.h; sourceTree = "<group>"; };
+		A7B707E71216EE9E005589C5 /* FPStage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPStage.m; sourceTree = "<group>"; };
+		A7FA0E72124146DE00646F11 /* FPXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPXMLParser.h; sourceTree = "<group>"; };
+		A7FA0E73124146DE00646F11 /* FPXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPXMLParser.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A72D682B1205ED8800BF908F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A72D68321205ED8800BF908F /* Cocoa.framework in Frameworks */,
+				A79C2AF01205F6070021714D /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A72D681F1205ED8800BF908F = {
+			isa = PBXGroup;
+			children = (
+				A79C29E11205F4050021714D /* SharedClasses */,
+				A72D68261205ED8800BF908F /* Classes */,
+				A72D68271205ED8800BF908F /* Other Sources */,
+				A72D68281205ED8800BF908F /* Resources */,
+				A72D68291205ED8800BF908F /* Frameworks */,
+				A72D682F1205ED8800BF908F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A72D68261205ED8800BF908F /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A79C2AF21205F6370021714D /* FPFactoryView.h */,
+				A79C2AF31205F6370021714D /* FPFactoryView.m */,
+				A79C2AF41205F6370021714D /* FPGameView.h */,
+				A79C2AF51205F6370021714D /* FPGameView.m */,
+				A79C2AF61205F6370021714D /* FPLevelView.h */,
+				A79C2AF71205F6370021714D /* FPLevelView.m */,
+				A79C2AF81205F6370021714D /* NSOpenGLView+Helpers.h */,
+				A79C2AF91205F6370021714D /* NSOpenGLView+Helpers.m */,
+				A72D68401205ED8800BF908F /* MyDocument.h */,
+				A72D68411205ED8800BF908F /* MyDocument.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		A72D68271205ED8800BF908F /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A72D68341205ED8800BF908F /* IronJumpLevelEditor_Prefix.pch */,
+				A72D68381205ED8800BF908F /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		A72D68281205ED8800BF908F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A7037CF6123FEB0E00B39ED6 /* DocumentBIN.icns */,
+				A7037CF7123FEB0E00B39ED6 /* DocumentXML.icns */,
+				A7553203120602B6006F4D3E /* IronJump.icns */,
+				A79C2A881205F4810021714D /* Images */,
+				A72D68331205ED8800BF908F /* IronJumpLevelEditor-Info.plist */,
+				A72D68351205ED8800BF908F /* InfoPlist.strings */,
+				A72D683A1205ED8800BF908F /* MainMenu.xib */,
+				A72D68431205ED8800BF908F /* MyDocument.xib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		A72D68291205ED8800BF908F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A79C2AEF1205F6070021714D /* OpenGL.framework */,
+				A72D68311205ED8800BF908F /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A72D682F1205ED8800BF908F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A72D682E1205ED8800BF908F /* IronJumpLevelEditor.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A79C29E11205F4050021714D /* SharedClasses */ = {
+			isa = PBXGroup;
+			children = (
+				A7FA0E72124146DE00646F11 /* FPXMLParser.h */,
+				A7FA0E73124146DE00646F11 /* FPXMLParser.m */,
+				A7260B30124005A90092B658 /* FPXMLWriter.h */,
+				A7260B31124005A90092B658 /* FPXMLWriter.m */,
+				A7B707E61216EE9E005589C5 /* FPStage.h */,
+				A7B707E71216EE9E005589C5 /* FPStage.m */,
+				A72F887D120DBE92004DFB84 /* FPReplay.h */,
+				A72F887E120DBE92004DFB84 /* FPReplay.m */,
+				A79C29E21205F4050021714D /* FPDiamond.h */,
+				A79C29E31205F4050021714D /* FPDiamond.m */,
+				A79C29E41205F4050021714D /* FPElevator.h */,
+				A79C29E51205F4050021714D /* FPElevator.m */,
+				A79C29E61205F4050021714D /* FPExit.h */,
+				A79C29E71205F4050021714D /* FPExit.m */,
+				A79C29E81205F4050021714D /* FPFont.h */,
+				A79C29E91205F4050021714D /* FPFont.m */,
+				A79C29EA1205F4050021714D /* FPGame.h */,
+				A79C29EB1205F4050021714D /* FPGame.m */,
+				A79C29EC1205F4050021714D /* FPGameAtlas.h */,
+				A79C29ED1205F4050021714D /* FPGameAtlas.m */,
+				A79C29EE1205F4050021714D /* FPGameProtocols.h */,
+				A79C29EF1205F4050021714D /* FPGraphics.h */,
+				A79C29F01205F4050021714D /* FPGraphics.m */,
+				A79C29F11205F4050021714D /* FPMagnet.h */,
+				A79C29F21205F4050021714D /* FPMagnet.m */,
+				A79C29F31205F4050021714D /* FPMath.c */,
+				A79C29F41205F4050021714D /* FPMath.h */,
+				A79C29F51205F4050021714D /* FPMovablePlatform.h */,
+				A79C29F61205F4050021714D /* FPMovablePlatform.m */,
+				A79C29F71205F4050021714D /* FPPlatform.h */,
+				A79C29F81205F4050021714D /* FPPlatform.m */,
+				A79C29F91205F4050021714D /* FPPlayer.h */,
+				A79C29FA1205F4050021714D /* FPPlayer.m */,
+				A79C29FB1205F4050021714D /* FPSpeedPowerUp.h */,
+				A79C29FC1205F4050021714D /* FPSpeedPowerUp.m */,
+				A79C29FD1205F4050021714D /* FPTexture.h */,
+				A79C29FE1205F4050021714D /* FPTexture.m */,
+				A79C29FF1205F4050021714D /* FPTextureArray.h */,
+				A79C2A001205F4050021714D /* FPTextureArray.m */,
+				A79C2A011205F4050021714D /* FPTextureAtlas.h */,
+				A79C2A021205F4050021714D /* FPTextureAtlas.m */,
+				A79C2A031205F4050021714D /* FPTrampoline.h */,
+				A79C2A041205F4050021714D /* FPTrampoline.m */,
+			);
+			name = SharedClasses;
+			path = /Users/filipkunc/Documents/Programming/GitProjects/IronJump/SharedClasses;
+			sourceTree = "<absolute>";
+		};
+		A79C2A881205F4810021714D /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				A79C2A891205F4810021714D /* AndaleMono.png */,
+				A79C2A8A1205F4810021714D /* ball.png */,
+				A79C2A8B1205F4810021714D /* diamond.png */,
+				A79C2A8C1205F4810021714D /* exit.png */,
+				A79C2A8D1205F4810021714D /* jump.png */,
+				A79C2A8E1205F4810021714D /* magnet.png */,
+				A79C2A8F1205F4810021714D /* marbleblue.png */,
+				A79C2A901205F4810021714D /* movable.png */,
+				A79C2A911205F4810021714D /* plos_marble.png */,
+				A79C2A921205F4810021714D /* speed.png */,
+				A79C2A931205F4810021714D /* speed_symbol.png */,
+				A79C2A941205F4810021714D /* trampoline01.png */,
+				A79C2A951205F4810021714D /* trampoline02.png */,
+				A79C2A961205F4810021714D /* trampoline03.png */,
+				A79C2A971205F4810021714D /* vytah01.png */,
+				A79C2A981205F4810021714D /* vytah02.png */,
+				A79C2A991205F4810021714D /* vytah03.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A72D682D1205ED8800BF908F /* IronJumpLevelEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A72D68481205ED8800BF908F /* Build configuration list for PBXNativeTarget "IronJumpLevelEditor" */;
+			buildPhases = (
+				A72D682A1205ED8800BF908F /* Sources */,
+				A72D682B1205ED8800BF908F /* Frameworks */,
+				A72D682C1205ED8800BF908F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IronJumpLevelEditor;
+			productName = IronJumpLevelEditor;
+			productReference = A72D682E1205ED8800BF908F /* IronJumpLevelEditor.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A72D68211205ED8800BF908F /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = A72D68241205ED8800BF908F /* Build configuration list for PBXProject "IronJumpLevelEditor" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A72D681F1205ED8800BF908F;
+			productRefGroup = A72D682F1205ED8800BF908F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A72D682D1205ED8800BF908F /* IronJumpLevelEditor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A72D682C1205ED8800BF908F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A72D68371205ED8800BF908F /* InfoPlist.strings in Resources */,
+				A72D683C1205ED8800BF908F /* MainMenu.xib in Resources */,
+				A72D68451205ED8800BF908F /* MyDocument.xib in Resources */,
+				A79C2A9A1205F4810021714D /* AndaleMono.png in Resources */,
+				A79C2A9B1205F4810021714D /* ball.png in Resources */,
+				A79C2A9C1205F4810021714D /* diamond.png in Resources */,
+				A79C2A9D1205F4810021714D /* exit.png in Resources */,
+				A79C2A9E1205F4810021714D /* jump.png in Resources */,
+				A79C2A9F1205F4810021714D /* magnet.png in Resources */,
+				A79C2AA01205F4810021714D /* marbleblue.png in Resources */,
+				A79C2AA11205F4810021714D /* movable.png in Resources */,
+				A79C2AA21205F4810021714D /* plos_marble.png in Resources */,
+				A79C2AA31205F4810021714D /* speed.png in Resources */,
+				A79C2AA41205F4810021714D /* speed_symbol.png in Resources */,
+				A79C2AA51205F4810021714D /* trampoline01.png in Resources */,
+				A79C2AA61205F4810021714D /* trampoline02.png in Resources */,
+				A79C2AA71205F4810021714D /* trampoline03.png in Resources */,
+				A79C2AA81205F4810021714D /* vytah01.png in Resources */,
+				A79C2AA91205F4810021714D /* vytah02.png in Resources */,
+				A79C2AAA1205F4810021714D /* vytah03.png in Resources */,
+				A7553204120602B6006F4D3E /* IronJump.icns in Resources */,
+				A7037CF8123FEB0E00B39ED6 /* DocumentBIN.icns in Resources */,
+				A7037CF9123FEB0E00B39ED6 /* DocumentXML.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A72D682A1205ED8800BF908F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A72D68391205ED8800BF908F /* main.m in Sources */,
+				A72D68421205ED8800BF908F /* MyDocument.m in Sources */,
+				A79C2A051205F4050021714D /* FPDiamond.m in Sources */,
+				A79C2A061205F4050021714D /* FPElevator.m in Sources */,
+				A79C2A071205F4050021714D /* FPExit.m in Sources */,
+				A79C2A081205F4050021714D /* FPFont.m in Sources */,
+				A79C2A091205F4050021714D /* FPGame.m in Sources */,
+				A79C2A0A1205F4050021714D /* FPGameAtlas.m in Sources */,
+				A79C2A0B1205F4050021714D /* FPGraphics.m in Sources */,
+				A79C2A0C1205F4050021714D /* FPMagnet.m in Sources */,
+				A79C2A0D1205F4050021714D /* FPMath.c in Sources */,
+				A79C2A0E1205F4050021714D /* FPMovablePlatform.m in Sources */,
+				A79C2A0F1205F4050021714D /* FPPlatform.m in Sources */,
+				A79C2A101205F4050021714D /* FPPlayer.m in Sources */,
+				A79C2A111205F4050021714D /* FPSpeedPowerUp.m in Sources */,
+				A79C2A121205F4050021714D /* FPTexture.m in Sources */,
+				A79C2A131205F4050021714D /* FPTextureArray.m in Sources */,
+				A79C2A141205F4050021714D /* FPTextureAtlas.m in Sources */,
+				A79C2A151205F4050021714D /* FPTrampoline.m in Sources */,
+				A79C2AFA1205F6370021714D /* FPFactoryView.m in Sources */,
+				A79C2AFB1205F6370021714D /* FPGameView.m in Sources */,
+				A79C2AFC1205F6370021714D /* FPLevelView.m in Sources */,
+				A79C2AFD1205F6370021714D /* NSOpenGLView+Helpers.m in Sources */,
+				A72F887F120DBE92004DFB84 /* FPReplay.m in Sources */,
+				A7B707E81216EE9E005589C5 /* FPStage.m in Sources */,
+				A7260B32124005A90092B658 /* FPXMLWriter.m in Sources */,
+				A7FA0E74124146DE00646F11 /* FPXMLParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A72D68351205ED8800BF908F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A72D68361205ED8800BF908F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A72D683A1205ED8800BF908F /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A72D683B1205ED8800BF908F /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		A72D68431205ED8800BF908F /* MyDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A72D68441205ED8800BF908F /* en */,
+			);
+			name = MyDocument.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A72D68461205ED8800BF908F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = Debug;
+		};
+		A72D68471205ED8800BF908F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = Release;
+		};
+		A72D68491205ED8800BF908F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = IronJumpLevelEditor_Prefix.pch;
+				INFOPLIST_FILE = "IronJumpLevelEditor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = IronJumpLevelEditor;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		A72D684A1205ED8800BF908F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = IronJumpLevelEditor_Prefix.pch;
+				INFOPLIST_FILE = "IronJumpLevelEditor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = IronJumpLevelEditor;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A72D68241205ED8800BF908F /* Build configuration list for PBXProject "IronJumpLevelEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A72D68461205ED8800BF908F /* Debug */,
+				A72D68471205ED8800BF908F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A72D68481205ED8800BF908F /* Build configuration list for PBXNativeTarget "IronJumpLevelEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A72D68491205ED8800BF908F /* Debug */,
+				A72D684A1205ED8800BF908F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A72D68211205ED8800BF908F /* Project object */;
+}
