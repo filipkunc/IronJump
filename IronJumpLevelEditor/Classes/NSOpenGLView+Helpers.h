@@ -3,7 +3,7 @@
 //  MacRubyGame
 //
 //  Created by Filip Kunc on 3/25/10.
-//  All rights reserved.
+//  For license see LICENSE.TXT
 //
 
 #import <Cocoa/Cocoa.h>

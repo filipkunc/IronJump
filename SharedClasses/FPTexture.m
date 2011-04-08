@@ -3,7 +3,7 @@
 //  SpriteLib
 //
 //  Created by Filip Kunc on 4/12/10.
-//  Copyright (c) 2010 Filip Kunc. All rights reserved.
+//  For license see LICENSE.TXT
 //
 
 #import "FPTexture.h"

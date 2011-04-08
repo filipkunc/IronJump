@@ -3,7 +3,7 @@
 //  IronJump
 //
 //  Created by Filip Kunc on 4/17/10.
-//  Copyright (c) 2010 Filip Kunc. All rights reserved.
+//  For license see LICENSE.TXT
 //
 
 #import <Cocoa/Cocoa.h>

@@ -3,7 +3,7 @@
 //  IronJumpLevelEditor
 //
 //  Created by Filip Kunc on 9/14/10.
-//  Copyright (c) 2010 Filip Kunc. All rights reserved.
+//  For license see LICENSE.TXT
 //
 
 #import <Foundation/Foundation.h>

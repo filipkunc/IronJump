@@ -3,7 +3,7 @@
 //  IronJump
 //
 //  Created by Filip Kunc on 6/5/10.
-//  Copyright (c) 2010 Filip Kunc. All rights reserved.
+//  For license see LICENSE.TXT
 //
 
 #import "FPGameProtocols.h"
