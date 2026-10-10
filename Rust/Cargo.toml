@@ -1,0 +1,11 @@
+[package]
+name = "ironjump"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "MIT"
+description = "A small Rust rendering starter for IronJump"
+
+[dependencies]
+macroquad = { version = "0.4.16", default-features = false }
+roxmltree = "0.21.1"

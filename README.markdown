@@ -16,4 +16,10 @@ IronJump is free game for iPhone and iPod Touch. It is a platform game completel
     IronJump             - iPhone project
     IronJumpLevelEditor  - Mac OS X project
     SharedClasses        - code shared between level editor and iPhone game
+    Rust                 - Rust image/text rendering starter (no game logic ported)
+
+## Rust starter
+
+Run `cargo run --manifest-path Rust/Cargo.toml` from this directory.
+See [Rust/README.md](Rust/README.md) for the structure and drawing examples.
 

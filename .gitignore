@@ -23,3 +23,6 @@ obj
 
 # windows noise
 Thumbs.db
+
+# rust build output (keep Cargo.lock for reproducible application builds)
+/Rust/target/
