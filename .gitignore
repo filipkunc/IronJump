@@ -26,3 +26,7 @@ Thumbs.db
 
 # rust build output (keep Cargo.lock for reproducible application builds)
 /Rust/target/
+
+# Local Rust game progress
+ironjump-progress.txt
+ironjump-progress.tmp

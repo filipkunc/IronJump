@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 publish = false
 license = "MIT"
-description = "A small Rust rendering starter for IronJump"
+description = "A Rust desktop port of the IronJump iPhone game"
 
 [dependencies]
 macroquad = { version = "0.4.16", default-features = false }

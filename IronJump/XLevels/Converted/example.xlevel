@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<IronJumpLevel>
+  <FPPlatform>
+    <x>160.000000</x>
+    <y>544.000000</y>
+    <widthSegments>6</widthSegments>
+    <heightSegments>3</heightSegments>
+  </FPPlatform>
+  <FPPlayer>
+    <x>192.000000</x>
+    <y>512.000000</y>
+  </FPPlayer>
+  <FPPlatform>
+    <x>480.000000</x>
+    <y>480.000000</y>
+    <widthSegments>5</widthSegments>
+    <heightSegments>5</heightSegments>
+  </FPPlatform>
+  <FPElevator>
+    <x>672.000000</x>
+    <y>480.000000</y>
+    <endX>896.000000</endX>
+    <endY>480.000000</endY>
+    <widthSegments>6</widthSegments>
+  </FPElevator>
+  <FPPlatform>
+    <x>1120.000000</x>
+    <y>480.000000</y>
+    <widthSegments>10</widthSegments>
+    <heightSegments>5</heightSegments>
+  </FPPlatform>
+  <FPTrampoline>
+    <x>1216.000000</x>
+    <y>448.000000</y>
+    <widthSegments>2</widthSegments>
+  </FPTrampoline>
+  <FPPlatform>
+    <x>1504.000000</x>
+    <y>288.000000</y>
+    <widthSegments>6</widthSegments>
+    <heightSegments>4</heightSegments>
+  </FPPlatform>
+  <FPExit>
+    <x>1568.000000</x>
+    <y>192.000000</y>
+  </FPExit>
+</IronJumpLevel>

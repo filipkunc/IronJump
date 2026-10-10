@@ -1,103 +1,116 @@
-# IronJump Rust starter
+# IronJump — Rust port
 
-A small desktop starting point using [Macroquad](https://macroquad.rs/), which
-provides a window, input, GPU-backed 2D drawing, and text via Miniquad. It uses
-the OpenGL-style stack you asked for, with no custom shaders or renderer setup
-needed. Audio is disabled. There is no game logic, physics, or level loading yet.
+A desktop port of the original iPhone game using Macroquad. The gameplay follows
+`SharedClasses` and the campaign flow in `IronJump/Classes/EAGLView.m`. Rendering
+uses the original iPhone atlas, bitmap font, and menu artwork.
 
 ## Run
 
-Install a current stable Rust toolchain, then from the repository root:
+From the repository root:
 
 ```sh
 cargo run --manifest-path Rust/Cargo.toml
 ```
 
-Or run `cargo run` inside `Rust/`. The first build downloads dependencies. A
-graphical desktop with an OpenGL-capable driver is required to open the window.
-The starter targets desktop use; mobile/browser packaging is not set up here.
+A graphical desktop with an OpenGL-capable driver is required. The game renders
+at 480 × 320 and scales with letterboxing when the window is resized.
 
-You should see a movable ball, a diamond, and text. Use arrows or WASD to move
-the ball in four directions; Escape or closing the window quits. Resize the
-window to see drawing bounds adjust.
+## Controls
 
-## Where to start
+- **Left / Right** or **A / D**: move.
+- **Up**, **W**, or **Space**: jump. Holding jump repeats jumps when grounded.
+- **R**: restart the current level.
+- **Escape**: return to the level menu; Escape in the menu quits.
+- **Q**: quit.
+- In the menu, click a level and **Play**, or press **Enter** to start the selected
+  level. Left/Right changes stage; Up/Down selects an available adjacent level.
+- On a touch-capable display, hold the left/middle third to move left/right and
+  the right third to jump. Menu buttons also respond to touch through mouse
+  emulation. These controls replace the original iPhone accelerometer input.
 
-- `src/main.rs`: window settings and the input/update/draw frame loop.
-- `src/assets.rs`: texture ownership and one-time loading.
-- `src/demo.rs`: a small state struct with `update(dt)` and `draw(&assets)`;
-  replace this with your own port as you go.
+## Gameplay
 
-The PNGs are embedded from `Canvas/Images` at compile time, so launching the
-binary does not depend on the current directory or on loose asset files.
-Changing an embedded image requires rebuilding. Create textures after the
-graphics context starts and reuse them across frames.
+All nine archived object types are supported: player, platforms, movable
+platforms, elevators, diamonds, exits, trampolines, magnets, and speed boosts.
+The 30 campaign levels follow the original iPhone order in stages of up to 11
+levels. Five additional archived development levels appear in a custom stage.
 
-## Drawing images and text
+Touching an exit advances after 31 simulation ticks and unlocks the next campaign
+level. Diamonds are counted but are not required to use an exit, matching the
+original. Falling below all fixed platforms restarts after 31 ticks. Completing
+the final campaign or custom level displays the victory screen.
 
-Inside `draw`, an image at its original size is just:
+Speed boosts last six seconds and respawn. Trampolines launch both the player
+and movable platforms; magnets attract the player from below. Elevator motion,
+attachments, carrying, and collision correction are coordinated by `World`.
+Initially attached crates are moved once, avoiding the original double-movement
+path through both attachment and movable carrying logic.
 
-```rust
-draw_texture(&assets.ball, 100.0, 200.0, WHITE);
+The simulation runs at 60 Hz. Non-movable objects update first, then movable
+platforms, then the player, preserving the original gameplay order.
+
+## Progress and custom levels
+
+Progress is saved in `ironjump-progress.txt` in the working directory. It stores
+the selected level and highest unlocked campaign level. To choose another file:
+
+```sh
+cargo run --manifest-path Rust/Cargo.toml -- --progress /path/to/progress.txt
 ```
 
-`draw_texture_ex` adds scaling, rotation, flipping, and atlas source rectangles:
+Open an XML level directly, or add a folder of XML levels to the custom stages:
 
-```rust
-draw_texture_ex(
-    &assets.ball,
-    100.0,
-    200.0,
-    WHITE,
-    DrawTextureParams {
-        dest_size: Some(vec2(64.0, 64.0)),
-        // source: Some(Rect::new(x, y, width, height)), // atlas pixels
-        rotation: 0.0, // radians
-        ..Default::default()
-    },
-);
+```sh
+cargo run --manifest-path Rust/Cargo.toml -- --level IronJump/XLevels/Converted/example.xlevel
+cargo run --manifest-path Rust/Cargo.toml -- --levels-dir /path/to/custom-levels
 ```
 
-Coordinates start at the top left, with positive y downward. Image coordinates
-refer to the top-left corner; text y refers to the baseline. Drawing uses the
-current window coordinate space, not a fixed game resolution. Later drawing
-appears on top of earlier drawing. `WHITE` preserves an image's original color;
-another color tints it. The starter uses nearest-neighbor texture filtering;
-switch to `FilterMode::Linear` in `assets.rs` for smooth scaling.
+Custom files are validated before play. A level must have one player, known
+object types, finite coordinates, and positive tile dimensions. Campaign levels
+and artwork are embedded in the executable, so they need no runtime asset paths.
 
-Text works immediately with the bundled default font:
+All 35 original binary `.level` archives are converted into
+`IronJump/XLevels/Converted`. Regenerate or verify them using Python 3.10+:
 
-```rust
-draw_text("Hello, Rust!", 24.0, 48.0, 32.0, WHITE);
+```sh
+python3 tools/convert_levels.py
+python3 tools/convert_levels.py --check
 ```
 
-For your own TTF font, add a font file, load it once in `main` after graphics
-initialization, and pass it when drawing:
+For an additional binary archive, use the converter before loading it in Rust:
 
-```rust,ignore
-let font = load_ttf_font_from_bytes(include_bytes!("../assets/my-font.ttf"))
-    .expect("could not load font");
-draw_text_ex("Hello!", 24.0, 48.0, TextParams {
-    font: Some(&font),
-    font_size: 32,
-    color: WHITE,
-    ..Default::default()
-});
+```sh
+python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 ```
 
-`dt` is in seconds. The demo caps long frames and moves at a constant speed,
-including diagonally. Choose your own physics/timing model when porting the game.
-The `async` entry point and `next_frame().await` yield to Macroquad's frame loop;
-no separate async runtime or background thread is needed.
+## Code layout
+
+- `src/main.rs`: window, desktop/touch input, fixed simulation steps, and scaling.
+- `src/session.rs`: menu, stages, progress, transitions, restart, and victory.
+- `src/levels.rs`: embedded campaign and development levels.
+- `src/game.rs`: player physics, world, collision geometry, XML loading, and HUD.
+- `src/game/elevator.rs`: elevator route state and coordinated world interactions.
+- `src/game/objects.rs`: collectibles, exit, trampoline, and magnet behavior.
+- `src/assets.rs`: iPhone atlas regions, sprite drawing, font, and menu textures.
+
+Objects use `UpdateContext` to inspect other objects without borrowing themselves
+again. Effects that change other bodies are applied by `World` after the current
+object borrow ends. Invisible collectibles stay in the object array, preserving
+stable indices used by elevator attachments.
+
+This ports the iPhone game runtime to the existing desktop Rust application.
+Cocoa level-editor tools, editor replay recording, and native iOS application
+packaging are outside this runtime. The old `src/demo.rs` is not part of the build.
 
 ## Development checks
 
 ```sh
 cargo fmt --manifest-path Rust/Cargo.toml --check
-cargo clippy --manifest-path Rust/Cargo.toml --all-targets -- -D warnings
-cargo build --manifest-path Rust/Cargo.toml --locked
+cargo clippy --offline --manifest-path Rust/Cargo.toml --all-targets -- -D warnings
+cargo test --offline --manifest-path Rust/Cargo.toml
+cargo build --offline --locked --manifest-path Rust/Cargo.toml
+python3 tools/convert_levels.py --check
 ```
 
-API references: [textures](https://docs.rs/macroquad/0.4.16/macroquad/texture/index.html),
-[text](https://docs.rs/macroquad/0.4.16/macroquad/text/index.html),
-[input](https://docs.rs/macroquad/0.4.16/macroquad/input/index.html).
+Tests cover all object types, collision sequencing, moving platforms, power-up
+expiry, progression, persistence, and loading/simulating every converted level.
