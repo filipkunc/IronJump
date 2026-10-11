@@ -88,10 +88,23 @@ python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 - `src/main.rs`: window, desktop/touch input, fixed simulation steps, and scaling.
 - `src/session.rs`: menu, stages, progress, transitions, restart, and victory.
 - `src/levels.rs`: embedded campaign and development levels.
-- `src/game.rs`: player physics, world, collision geometry, XML loading, and HUD.
-- `src/game/elevator.rs`: elevator route state and coordinated world interactions.
-- `src/game/objects.rs`: collectibles, exit, trampoline, and magnet behavior.
+- `src/game.rs`: game orchestration, completion checks, and HUD.
+- `src/game/`: one module per original game object: `player.rs`, `platform.rs`,
+  `movable_platform.rs`, `elevator.rs`, `diamond.rs`, `exit.rs`, `trampoline.rs`,
+  `magnet.rs`, and `speed_power_up.rs`. Each owns its object's state and behavior.
+- `src/game/world.rs`: object update order, world scrolling, and background drawing.
+  Elevator-specific world interactions live alongside the elevator in `elevator.rs`.
+- `src/game/game_object.rs`: shared object trait, update context, and world effects.
+- `src/game/collision.rs`: shared collision geometry.
+- `src/game/level_loader.rs`: XML validation and object construction.
 - `src/assets.rs`: iPhone atlas regions, sprite drawing, font, and menu textures.
+- `src/game/test_support.rs`: shared game fixtures, compiled only for tests.
+
+Unit tests live at the bottom of the implementation file they cover, inside
+`#[cfg(test)] mod tests` blocks. They can check private state without exposing it
+as a public testing API. World tests cover interactions and update ordering;
+loader tests cover validation and simulation of every bundled level. The exit
+tests also cover diamond collection and completion with uncollected diamonds.
 
 Objects use `UpdateContext` to inspect other objects without borrowing themselves
 again. Effects that change other bodies are applied by `World` after the current
@@ -100,7 +113,7 @@ stable indices used by elevator attachments.
 
 This ports the iPhone game runtime to the existing desktop Rust application.
 Cocoa level-editor tools, editor replay recording, and native iOS application
-packaging are outside this runtime. The old `src/demo.rs` is not part of the build.
+packaging are outside this runtime.
 
 ## Development checks
 
@@ -114,3 +127,8 @@ python3 tools/convert_levels.py --check
 
 Tests cover all object types, collision sequencing, moving platforms, power-up
 expiry, progression, persistence, and loading/simulating every converted level.
+Run one group by its module name, for example:
+
+```sh
+cargo test --offline --manifest-path Rust/Cargo.toml game::player::tests
+```

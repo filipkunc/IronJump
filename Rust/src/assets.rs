@@ -71,6 +71,10 @@ impl Assets {
     pub fn new() -> Self {
         let atlas = texture(include_bytes!("../../IronJump/Images/levelatlas.png"));
         let tile = |x, y, w, h| Sprite::region(&atlas, x, y, w, h);
+        // The rotating ball needs smooth sampling. A separate texture keeps its
+        // filter independent of the nearest-filtered tiles in the shared atlas.
+        let ball = Sprite::image(include_bytes!("../../IronJump/Images/atlas/ball.png"));
+        ball.texture.set_filter(FilterMode::Linear);
         let mut font_image = Image::from_file_with_format(
             include_bytes!("../../IronJump/Images/AndaleMono.png"),
             Some(ImageFormat::Png),
@@ -84,7 +88,7 @@ impl Assets {
         let font = Texture2D::from_image(&font_image);
         font.set_filter(FilterMode::Nearest);
         Self {
-            ball: tile(1.0, 1.0, 32.0, 32.0),
+            ball,
             diamond: tile(34.0, 1.0, 32.0, 32.0),
             platform: tile(133.0, 1.0, 32.0, 32.0),
             background: [tile(67.0, 1.0, 32.0, 32.0), tile(34.0, 34.0, 32.0, 32.0)],

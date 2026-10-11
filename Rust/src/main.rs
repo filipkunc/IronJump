@@ -227,6 +227,7 @@ async fn main() {
                 ..Default::default()
             },
         );
+        session.draw_controls(view);
         next_frame().await;
     }
 }
