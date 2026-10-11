@@ -1,6 +1,6 @@
 # IronJump — Rust port
 
-A Rust port of the original iPhone game with a Macroquad desktop backend. The gameplay follows
+A Rust port of the original iPhone game with a Macroquad desktop/Android backend. The gameplay follows
 `SharedClasses` and the campaign flow in `IronJump/Classes/EAGLView.m`. Rendering
 uses the original iPhone atlas, bitmap font, and menu artwork.
 
@@ -17,6 +17,48 @@ Wider or taller screens reveal more of the level with uniformly scaled sprites.
 Resizing recenters the player without resetting the game. The original 480 × 320
 menu artwork remains centered with letterboxing.
 
+## Android preview
+
+The first Android build uses the same Macroquad renderer and game library. It
+supports tilt steering, motion jumping, touch controls, Android Back, app-private
+progress saves, and clock reset on resume. It opens in either landscape orientation.
+The activity requests a 60 Hz display mode to match the simulation; this is an
+app-local preference that the device may override.
+The launcher uses the original `IronJump/Icon.png` through an Android adaptive
+icon, inset to keep the ball visible under different launcher masks. The resource
+is symlinked to the original artwork rather than maintaining a second copy.
+
+On Linux, install Java, Git, Cargo, `zip`, Android SDK platform/build-tools 36,
+NDK 28.2.13676358, and the Rust ARM64 Android target. Then run from the repository root:
+
+```sh
+rustup target add aarch64-linux-android
+Rust/android/build.sh
+adb install --no-incremental -r Rust/target/android-artifacts/release/apk/ironjump.apk
+adb shell am start -n org.ironjump.game/.MainActivity
+```
+
+`ANDROID_HOME` defaults to `~/Android/Sdk`; `NDK_HOME` defaults to its
+`ndk/28.2.13676358` directory. Both can be overridden. The script downloads and
+builds a pinned upstream `cargo-quad-apk` under `Rust/target/android-tools`, with
+our small compatibility patch for Rust 2024 exports and native library naming.
+Subsequent builds reuse that tool. The APK uses the local Android debug signing
+key and is intended for sideloading, not store distribution.
+
+The Android package is `org.ironjump.game` (also used by the JNI callback names).
+`android/activity.java.in` supplies activity hooks through `quad.toml`, and
+`src/platform/android.rs` copies the save path and passes lifecycle/Back events
+between the Android UI thread and the game thread. Accelerometer samples use a
+mutex-protected adapter in `src/platform/motion.rs`, with tests beside the filter.
+SDK or JNI types do not enter
+the game library. A cold launch restores campaign progress and level selection;
+a level in progress is retained only while the app process remains alive.
+
+Verified on a Samsung SM-A556B running Android 16: launch, menu touch input,
+wide gameplay rendering, movement, Back navigation, home/resume, and saved level
+selection across a cold restart. Further
+work includes tuning motion controls on real devices and broader lifecycle/device testing.
+
 ## Controls
 
 - **Left / Right** or **A / D**: move.
@@ -28,7 +70,17 @@ menu artwork remains centered with letterboxing.
   level. Left/Right changes stage; Up/Down selects an available adjacent level.
 - On a touch-capable display, hold the left/middle third to move left/right and
   the right third to jump. Menu buttons also respond to touch through mouse
-  emulation. These controls replace the original iPhone accelerometer input.
+  emulation. Touch steering overrides tilt while held.
+- On Android, tilt the phone to steer; a quick vertical motion triggers the
+  original gesture jump. Touch-to-jump remains available in the right third.
+  Steering retains the original 0.02g dead zone and analog strength. The jump
+  detector retains the 0.05g threshold and 30 Hz filter response, adjusted for
+  actual sample intervals. A detected jump is held for 100 ms so it reaches a
+  simulation tick. The first sample after resume, rotation, or a gap seeds the
+  filter without jumping. Readings older than 250 ms release motion input.
+- Motion uses the accelerometer including gravity, remapped to screen coordinates
+  in either landscape orientation. Sensors stop when the app pauses. Devices
+  without an accelerometer can still use touch controls.
 
 ## Gameplay
 
@@ -49,7 +101,12 @@ Initially attached crates are moved once, avoiding the original double-movement
 path through both attachment and movable carrying logic.
 
 The simulation runs at 60 Hz. Non-movable objects update first, then movable
-platforms, then the player, preserving the original gameplay order.
+platforms, then the player, preserving the original gameplay order. Drawing
+interpolates between the last two simulation poses, including scrolling objects
+and ball rotation, so small frame timing variations do not show repeated poses
+followed by double movement. This adds up to one simulation tick of presentation
+delay. Level loads, viewport changes, and resume synchronize the poses immediately.
+The platform measures frame intervals with a monotonic clock.
 
 ## Progress and custom levels
 
@@ -97,6 +154,8 @@ python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 - `src/math.rs`: vectors and collision rectangles independent of the renderer.
 - `src/viewport.rs`: responsive gameplay, fitted menus, and pointer coordinate mapping.
 - `src/drawing.rs`: renderer trait, sprite identities, colors, and draw styles.
+- `src/drawing/translated.rs`: presentation offsets with matching visibility bounds.
+- `src/replay.rs`: portable frame-input trace encoding/decoding; no filesystem access.
 - `src/levels.rs`: embedded campaign and development levels.
 - `src/game.rs`: game orchestration, completion checks, and HUD.
 - `src/game/`: one module per original game object: `player.rs`, `platform.rs`,
@@ -108,8 +167,10 @@ python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 - `src/game/collision.rs`: shared collision geometry.
 - `src/game/level_loader.rs`: XML validation and object construction.
 - `src/backend.rs`: Macroquad renderer, render target, scaling, and sharp overlay text.
-- `src/backend/assets.rs`: GPU textures, atlas regions, and fonts. The rotating ball
-  uses linear filtering; tiles and the game render target use nearest filtering.
+- `src/backend/assets.rs`: shared gameplay/font atlas, sprite vertices, and visibility culling.
+- `src/backend/sampling.rs`: a single sprite shader retaining linear filtering for
+  the rotating ball and nearest sampling for tiles/glyphs. The game render target
+  also uses nearest filtering when scaled to the window.
 - `src/platform.rs`: desktop runner connecting the library to input, storage, and drawing.
 - `src/platform/`: keyboard/touch translation, command-line options, and file-backed saves.
 - `src/game/test_support.rs`: shared game fixtures, compiled only for tests.
@@ -142,12 +203,68 @@ To build and test the library without a graphics backend or display:
 cargo test --offline --manifest-path Rust/Cargo.toml --no-default-features
 ```
 
-This separation prepares for another backend or Android adapter; Android packaging
-and accelerometer support are not implemented yet.
+This separation also allows another drawing backend. The Android preview uses
+Macroquad and keeps sensor integration in the platform adapter.
 
 This ports the iPhone game runtime to the existing desktop Rust application.
 Cocoa level-editor tools, editor replay recording, and native iOS application
 packaging are outside this runtime.
+
+## Rendering performance
+
+Like `SharedClasses/FPGameAtlas.m`, the renderer appends visible sprite geometry
+to a shared batch. Repeated platforms visit only the tile rows/columns intersecting
+the current viewport; individual sprites use rotation-aware bounds. Offscreen
+objects still participate in simulation. The original artwork and converted font
+are packed into one GPU atlas at startup, with a padded ball region for linear
+sampling. Indexed quads use four vertices and six indices; Macroquad manages the
+shared streaming buffers. Unlike the original `FPGame.m` background VBO, the Rust
+background currently joins this streaming batch rather than a separate static buffer.
+
+Four fixed gameplay snapshots on the SM-A556B measured two draw calls each: one
+for the scene including HUD, and one for presenting the render target. Menus and
+victory overlays use additional batches. The `speed4` snapshot dropped from six
+draw calls / 2,002 quads to two / 334, including the presentation quad. Its median
+CPU submission time went from 1.29 ms to 0.65 ms in these runs. These are short
+render-only samples, not a full gameplay or GPU timing benchmark; the display
+preference also changed from the observed 120 Hz to 60 Hz between runs.
+
+To repeat the startup benchmark on Android:
+
+```sh
+Rust/android/build.sh --features render-benchmark
+adb install --no-incremental -r Rust/target/android-artifacts/release/apk/ironjump.apk
+adb shell am force-stop org.ironjump.game
+adb shell am start -n org.ironjump.game/.MainActivity
+adb logcat -s SAPP:I '*:S'
+```
+
+`IronJumpBench` lines report actual batch/quad counts and median/p95 frame intervals
+and CPU submission times for four level snapshots, then open the normal menu.
+Saved progress is untouched. GPU capture frames are excluded from timing samples;
+submission times exclude deferred GPU flushes. Rebuild with `Rust/android/build.sh`
+without the feature to remove the startup benchmark from the APK.
+
+For live gameplay diagnostics, build with `--features frame-profile` instead.
+This logs a timing summary every 300 frames and records semantic input, elapsed
+time, viewport, clock resets, and per-frame update/drawing times. A worker thread
+writes buffered chunks so the game thread does not perform per-frame disk I/O.
+The trace starts with current campaign progress; it supports the bundled levels.
+It is overwritten on a cold launch, so retrieve it before restarting the app:
+
+```sh
+adb pull /sdcard/Android/data/org.ironjump.game/files/ironjump-trace.txt /tmp/ironjump-trace.txt
+cargo run --release --manifest-path Rust/Cargo.toml --no-default-features \
+  --example replay -- /tmp/ironjump-trace.txt
+```
+
+The replay runs without graphics, checks every recorded simulation tick count,
+and reports the captured frame/update/draw timings by level. It never writes
+progress. Return to the menu after a recording and leave the app running while
+pulling the file; a partial final second can otherwise remain buffered. The
+normal build has tracing disabled. On desktop the trace sits beside the selected
+progress file; external custom levels disable recording because their XML is not
+embedded in the trace.
 
 ## Development checks
 

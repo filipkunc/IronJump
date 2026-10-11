@@ -60,6 +60,7 @@ impl Game {
         self.player.position += offset;
         self.world.move_world(offset);
         self.viewport_size = size;
+        self.reset_interpolation();
     }
 
     pub fn load(&mut self, xml: &str) -> Result<(), String> {
@@ -68,13 +69,35 @@ impl Game {
     }
 
     pub fn update(&mut self, input: GameInput) {
+        self.reset_interpolation();
         self.world.update(&mut self.player);
         self.player.update(&mut self.world, input);
     }
 
     pub fn draw(&self, renderer: &mut dyn Renderer, custom: bool) {
-        self.world.draw(renderer, custom, self.viewport_size);
-        self.player.draw(renderer);
+        self.draw_interpolated(renderer, custom, 1.0);
+    }
+
+    /// Capture poses before a tick, or synchronize them after a discontinuity.
+    pub fn reset_interpolation(&mut self) {
+        self.world.capture_render_state();
+        self.player.capture_render_state();
+    }
+
+    pub fn draw_interpolated(&self, renderer: &mut dyn Renderer, custom: bool, alpha: f32) {
+        let alpha = if alpha.is_finite() {
+            alpha.clamp(0.0, 1.0)
+        } else {
+            1.0
+        };
+        if alpha == 1.0 {
+            self.world.draw(renderer, custom, self.viewport_size);
+            self.player.draw(renderer);
+        } else {
+            self.world
+                .draw_interpolated(renderer, custom, self.viewport_size, alpha);
+            self.player.draw_interpolated(renderer, alpha);
+        }
         let (picked, total) = self.diamonds();
         renderer.bitmap_text(
             &format!("Diamonds: {picked}/{total}"),
@@ -131,6 +154,57 @@ mod tests {
         SpriteId, WHITE,
         test_support::{Command, RecordingRenderer},
     };
+
+    #[test]
+    fn interpolation_moves_world_and_ball_between_ticks_without_changing_physics() {
+        let mut game = test_support::game_with(
+            "<FPPlatform><x>0</x><y>32</y><widthSegments>8</widthSegments><heightSegments>1</heightSegments></FPPlatform>",
+        );
+        let mut before = RecordingRenderer::default();
+        game.draw(&mut before, false);
+        game.update(GameInput::new(1.0, true));
+        let mut after = RecordingRenderer::default();
+        game.draw(&mut after, false);
+        let mut middle = RecordingRenderer::default();
+        game.draw_interpolated(&mut middle, false, 0.5);
+        for id in [SpriteId::Platform, SpriteId::Ball] {
+            let pose = |r: &RecordingRenderer| {
+                r.commands
+                    .iter()
+                    .find_map(|c| match c {
+                        Command::Sprite(sprite, position, style) if *sprite == id => {
+                            Some((*position, style.rotation))
+                        }
+                        _ => None,
+                    })
+                    .unwrap()
+            };
+            let (a, ar) = pose(&before);
+            let (b, br) = pose(&after);
+            let (m, mr) = pose(&middle);
+            assert!((m - a.lerp(b, 0.5)).length() < 0.0001);
+            assert!((mr - (ar + br) * 0.5).abs() < 0.0001);
+        }
+        let mut unchanged = RecordingRenderer::default();
+        game.draw(&mut unchanged, false);
+        assert_eq!(after.commands, unchanged.commands);
+        // Resize and reload must not blend through old camera/level positions.
+        game.resize(vec2(700.0, 320.0));
+        for alpha in [0.0, 0.5, 1.0] {
+            let mut resized = RecordingRenderer::default();
+            game.draw_interpolated(&mut resized, false, alpha);
+            let mut current = RecordingRenderer::default();
+            game.draw(&mut current, false);
+            assert_eq!(resized.commands, current.commands);
+        }
+        let xml = crate::levels::bundled().remove(0).xml;
+        game.load(&xml).unwrap();
+        let mut loaded = RecordingRenderer::default();
+        game.draw_interpolated(&mut loaded, false, 0.0);
+        let mut current = RecordingRenderer::default();
+        game.draw(&mut current, false);
+        assert_eq!(loaded.commands, current.commands);
+    }
 
     #[test]
     fn resizing_preserves_live_state_and_relative_object_positions() {

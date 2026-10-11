@@ -10,6 +10,7 @@ pub struct Player {
     jumping: bool,
     pub(super) speed_up_counter: u32,
     alpha: f32,
+    previous_pose: Option<(Vec2, f32)>,
 }
 
 impl Player {
@@ -34,6 +35,7 @@ impl Player {
             jumping: false,
             speed_up_counter: 0,
             alpha: 1.0,
+            previous_pose: None,
         }
     }
 
@@ -183,19 +185,31 @@ impl Player {
     }
 
     pub fn draw(&self, renderer: &mut dyn Renderer) {
+        self.draw_interpolated(renderer, 1.0);
+    }
+
+    pub(super) fn capture_render_state(&mut self) {
+        self.previous_pose = Some((self.position, self.rotation));
+    }
+
+    pub(super) fn draw_interpolated(&self, renderer: &mut dyn Renderer, alpha: f32) {
+        let (previous_position, previous_rotation) =
+            self.previous_pose.unwrap_or((self.position, self.rotation));
+        let position = previous_position.lerp(self.position, alpha);
+        let rotation = previous_rotation + (self.rotation - previous_rotation) * alpha;
         renderer.sprite_ex(
             SpriteId::Ball,
-            self.position,
+            position,
             SpriteStyle {
                 color: WHITE,
-                rotation: self.rotation.to_radians(),
+                rotation: rotation.to_radians(),
                 flip_x: false,
             },
         );
         if self.speed_up_counter > 0 {
             renderer.sprite_ex(
                 SpriteId::SpeedEffect,
-                self.position - vec2(16.0, 16.0),
+                position - vec2(16.0, 16.0),
                 SpriteStyle {
                     color: Color::new(1.0, 1.0, 1.0, self.alpha.sin().abs() * 0.5 + 0.5),
                     rotation: 0.0,

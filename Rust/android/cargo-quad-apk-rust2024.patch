@@ -1,0 +1,32 @@
+diff --git a/src/ops/build.rs b/src/ops/build.rs
+index 31237e6..d792df5 100644
+--- a/src/ops/build.rs
++++ b/src/ops/build.rs
+@@ -123,12 +123,7 @@ fn build_apks(
+         fs::create_dir_all(&gen_dir)?;
+ 
+         let package_name = target_config.package_name.replace("-", "_");
+-        let library_name = target_config
+-            .package_name
+-            .split(".")
+-            .last()
+-            .unwrap()
+-            .clone();
++        let library_name = target.name().replace("-", "_");
+ 
+         let mut r_java_path = gen_dir.clone();
+         for file_part in package_name.split('.') {
+diff --git a/src/ops/build/compile.rs b/src/ops/build/compile.rs
+index 17d5fa2..e827000 100644
+--- a/src/ops/build/compile.rs
++++ b/src/ops/build/compile.rs
+@@ -174,7 +174,8 @@ impl Executor for SharedLibraryExecutor {
+                 .replace(".", "_");
+ 
+             let extra_code =
+-                extra_code.replace("JAVA_CLASS_PATH", &format!("Java_{}", package_name));
++                extra_code.replace("JAVA_CLASS_PATH", &format!("Java_{}", package_name))
++                    .replace("#[no_mangle]", "#[unsafe(no_mangle)]");
+ 
+             let tmp_file = TempFile::new(tmp_lib_filepath.clone(), |lib_src_file| {
+                 writeln!( lib_src_file, "{}\n{}", original_contents, extra_code)?;

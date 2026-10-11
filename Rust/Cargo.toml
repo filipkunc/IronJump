@@ -14,8 +14,30 @@ roxmltree = "0.21.1"
 [features]
 default = ["macroquad-backend"]
 macroquad-backend = ["dep:macroquad"]
+render-benchmark = ["macroquad-backend"]
+frame-profile = ["macroquad-backend"]
 
 [[bin]]
 name = "ironjump"
 path = "src/main.rs"
 required-features = ["macroquad-backend"]
+
+[package.metadata.android]
+package_name = "org.ironjump.game"
+label = "IronJump"
+icon = "@mipmap/ic_launcher"
+res = "android/res"
+android_version = 36
+target_sdk_version = 36
+min_sdk_version = 26
+build_targets = ["aarch64-linux-android"]
+fullscreen = true
+
+[package.metadata.android.activity_attributes]
+"android:exported" = "true"
+"android:screenOrientation" = "sensorLandscape"
+"android:enableOnBackInvokedCallback" = "true"
+
+[[package.metadata.android.feature]]
+name = "android.hardware.sensor.accelerometer"
+required = false

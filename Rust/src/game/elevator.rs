@@ -78,12 +78,11 @@ impl GameObject for Elevator {
     fn update(&mut self, _context: &UpdateContext<'_>) {}
 
     fn draw(&self, renderer: &mut dyn Renderer) {
-        for segment in 0..self.width_segments {
-            renderer.sprite(
-                SpriteId::Elevator(self.texture_index),
-                vec2(self.position.x + segment as f32 * 32.0, self.position.y),
-            );
-        }
+        renderer.tiles(
+            SpriteId::Elevator(self.texture_index),
+            self.rect(),
+            vec2(32.0, 32.0),
+        );
     }
 
     fn move_world(&mut self, offset: Vec2) {

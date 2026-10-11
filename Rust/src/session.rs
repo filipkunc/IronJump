@@ -198,8 +198,25 @@ impl Session {
     }
 
     pub fn draw(&self, renderer: &mut dyn Renderer, return_to_menu_hint: &str) {
+        self.draw_interpolated(renderer, return_to_menu_hint, 1.0);
+    }
+
+    pub fn draw_interpolated(
+        &self,
+        renderer: &mut dyn Renderer,
+        return_to_menu_hint: &str,
+        alpha: f32,
+    ) {
         if let Some(game) = &self.game {
-            game.draw(renderer, self.levels[self.progress.selected].custom);
+            game.draw_interpolated(
+                renderer,
+                self.levels[self.progress.selected].custom,
+                if self.mode == Mode::Playing {
+                    alpha
+                } else {
+                    1.0
+                },
+            );
             if self.mode == Mode::Victory {
                 renderer.rectangle(
                     Rect::new(0.0, 0.0, self.viewport_size.x, self.viewport_size.y),

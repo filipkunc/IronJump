@@ -98,17 +98,7 @@ impl GameObject for MovablePlatform {
     }
 
     fn draw(&self, renderer: &mut dyn Renderer) {
-        for iy in 0..self.height_segments {
-            for ix in 0..self.width_segments {
-                renderer.sprite(
-                    SpriteId::Movable,
-                    vec2(
-                        self.position.x + (ix as f32) * 32.0,
-                        self.position.y + (iy as f32) * 32.0,
-                    ),
-                );
-            }
-        }
+        renderer.tiles(SpriteId::Movable, self.rect(), vec2(32.0, 32.0));
     }
 
     fn move_world(&mut self, offset: Vec2) {

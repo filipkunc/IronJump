@@ -32,13 +32,9 @@ impl GameObject for Magnet {
         None
     }
     fn draw(&self, renderer: &mut dyn Renderer) {
-        for segment in 0..self.width_segments {
-            renderer.sprite(
-                SpriteId::Magnet,
-                vec2(self.position.x + segment as f32 * 32.0, self.position.y),
-            );
-        }
+        renderer.tiles(SpriteId::Magnet, self.rect(), vec2(32.0, 32.0));
     }
+
     fn rect(&self) -> Rect {
         Rect::new(
             self.position.x,

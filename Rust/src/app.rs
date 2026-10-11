@@ -9,12 +9,14 @@ const STEP: f64 = 1.0 / 60.0;
 pub struct App {
     pub session: Session,
     accumulator: f64,
+    pub ticks_last_frame: usize,
 }
 impl App {
     pub fn new(session: Session) -> Self {
         Self {
             session,
             accumulator: 0.0,
+            ticks_last_frame: 0,
         }
     }
 
@@ -22,10 +24,19 @@ impl App {
     /// restart its elapsed-time measurement before submitting the next frame.
     pub fn reset_clock(&mut self) {
         self.accumulator = 0.0;
+        if let Some(game) = &mut self.session.game {
+            game.reset_interpolation();
+        }
+    }
+
+    /// Fraction between the previous and current simulation poses for drawing.
+    pub fn interpolation_alpha(&self) -> f32 {
+        (self.accumulator / STEP) as f32
     }
 
     /// Returns false when the platform should close the application.
     pub fn frame(&mut self, input: &FrameInput, elapsed: f64) -> bool {
+        self.ticks_last_frame = 0;
         for &action in &input.actions {
             if !self.action(action) {
                 return false;
@@ -36,6 +47,7 @@ impl App {
         }
         while self.accumulator >= STEP {
             self.session.update(input.game);
+            self.ticks_last_frame += 1;
             self.accumulator -= STEP;
         }
         true
@@ -159,5 +171,54 @@ mod tests {
         normal.session.draw(&mut normal_frame, "Menu");
         faster.session.draw(&mut faster_frame, "Menu");
         assert_eq!(normal_frame.commands, faster_frame.commands);
+    }
+
+    #[test]
+    fn drawing_interpolates_across_frames_with_zero_or_two_ticks() {
+        use crate::drawing::{
+            SpriteId,
+            test_support::{Command, RecordingRenderer},
+        };
+        let mut app = app();
+        app.session.game = Some(crate::game::Game::new());
+        app.session.mode = Mode::Playing;
+        let input = FrameInput {
+            game: GameInput::new(1.0, false),
+            ..Default::default()
+        };
+        // Empty level has no floor: use fewer than 31 ticks to avoid fall restart.
+        for _ in 0..10 {
+            app.frame(&input, STEP);
+        }
+        let rotation = |app: &App| {
+            let mut renderer = RecordingRenderer::default();
+            app.session
+                .draw_interpolated(&mut renderer, "", app.interpolation_alpha());
+            renderer
+                .commands
+                .iter()
+                .find_map(|command| match command {
+                    Command::Sprite(SpriteId::Ball, _, style) => Some(style.rotation),
+                    _ => None,
+                })
+                .unwrap()
+        };
+        let a = rotation(&app);
+        app.frame(&input, STEP * 0.75);
+        assert_eq!(app.ticks_last_frame, 0);
+        let b = rotation(&app);
+        app.frame(&input, STEP * 1.25);
+        assert_eq!(app.ticks_last_frame, 2);
+        let c = rotation(&app);
+        // Angular speed stays proportional to wall time despite the 0/2 tick pair.
+        assert!(((b - a) / 0.75 - (c - b) / 1.25).abs() < 0.00001);
+        assert!(b > a && c > b);
+        app.reset_clock();
+        let mut current = RecordingRenderer::default();
+        app.session.draw(&mut current, "");
+        let mut resumed = RecordingRenderer::default();
+        app.session
+            .draw_interpolated(&mut resumed, "", app.interpolation_alpha());
+        assert_eq!(current.commands, resumed.commands);
     }
 }

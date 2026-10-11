@@ -1,0 +1,74 @@
+// Android hooks injected into Miniquad's MainActivity by cargo-quad-apk.
+//% MAIN_ACTIVITY_BODY
+private static native void ironjumpInit(String filesDirectory, String traceDirectory);
+private static native void ironjumpLifecycle(boolean resumed);
+private static native void ironjumpBack();
+private static native void ironjumpAcceleration(float x, float y, int rotation, long timestamp);
+private android.hardware.SensorManager ironjumpSensors;
+private android.hardware.Sensor ironjumpAccelerometer;
+private final android.hardware.SensorEventListener ironjumpSensorListener =
+    new android.hardware.SensorEventListener() {
+        @Override public void onAccuracyChanged(android.hardware.Sensor sensor, int accuracy) {}
+        @Override public void onSensorChanged(android.hardware.SensorEvent event) {
+            ironjumpAcceleration(event.values[0], event.values[1],
+                getWindowManager().getDefaultDisplay().getRotation(), event.timestamp);
+        }
+    };
+
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (event.getRepeatCount() == 0) ironjumpBack();
+        return true;
+    }
+    return super.onKeyDown(keyCode, event);
+}
+//% END
+
+//% MAIN_ACTIVITY_ON_CREATE
+java.io.File traceDirectory = getExternalFilesDir(null);
+ironjumpInit(getFilesDir().getAbsolutePath(),
+    (traceDirectory != null ? traceDirectory : getFilesDir()).getAbsolutePath());
+// Match the fixed 60 Hz simulation instead of alternating duplicate frames on
+// high-refresh displays. This is an app-local preference, not a system setting.
+android.view.WindowManager.LayoutParams displayParams = getWindow().getAttributes();
+displayParams.preferredRefreshRate = 60.0f;
+android.view.Display display = getWindowManager().getDefaultDisplay();
+android.view.Display.Mode currentMode = display.getMode();
+for (android.view.Display.Mode mode : display.getSupportedModes()) {
+    if (mode.getPhysicalWidth() == currentMode.getPhysicalWidth()
+            && mode.getPhysicalHeight() == currentMode.getPhysicalHeight()
+            && Math.abs(mode.getRefreshRate() - 60.0f) < 0.5f) {
+        displayParams.preferredDisplayModeId = mode.getModeId();
+        break;
+    }
+}
+getWindow().setAttributes(displayParams);
+ironjumpSensors = (android.hardware.SensorManager) getSystemService(Context.SENSOR_SERVICE);
+if (ironjumpSensors != null) {
+    ironjumpAccelerometer = ironjumpSensors.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER);
+}
+if (Build.VERSION.SDK_INT >= 33) {
+    getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+        android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+        new android.window.OnBackInvokedCallback() {
+            @Override public void onBackInvoked() { ironjumpBack(); }
+        });
+}
+//% END
+
+//% MAIN_ACTIVITY_ON_RESUME
+ironjumpLifecycle(true);
+if (ironjumpAccelerometer != null) {
+    boolean registered = ironjumpSensors.registerListener(ironjumpSensorListener,
+        ironjumpAccelerometer, 16667); // Request 60 Hz; actual rate can vary.
+    Log.i("IronJump", "Accelerometer " + (registered ? "enabled: " + ironjumpAccelerometer.getName() : "unavailable"));
+} else {
+    Log.i("IronJump", "No accelerometer; touch controls remain available");
+}
+//% END
+
+//% MAIN_ACTIVITY_ON_PAUSE
+if (ironjumpSensors != null) ironjumpSensors.unregisterListener(ironjumpSensorListener);
+ironjumpLifecycle(false);
+//% END

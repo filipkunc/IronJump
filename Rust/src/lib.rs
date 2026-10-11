@@ -6,5 +6,6 @@ pub mod input;
 pub mod levels;
 pub mod math;
 pub mod progress;
+pub mod replay;
 pub mod session;
 pub mod viewport;

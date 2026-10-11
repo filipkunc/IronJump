@@ -1,5 +1,6 @@
 //! Macroquad implementation of the game's drawing contract.
 mod assets;
+mod sampling;
 
 use assets::Assets;
 use ironjump::{
@@ -11,6 +12,7 @@ use macroquad::prelude as mq;
 
 pub struct MacroquadRenderer {
     assets: Assets,
+    sampling: mq::Material,
     target: mq::RenderTarget,
     camera: mq::Camera2D,
     logical_size: Vec2,
@@ -24,6 +26,7 @@ impl MacroquadRenderer {
         camera.render_target = Some(target.clone());
         Self {
             assets: Assets::new(),
+            sampling: sampling::material(),
             target,
             camera,
             logical_size: mq::vec2(GAME_WIDTH, GAME_HEIGHT),
@@ -47,10 +50,12 @@ impl MacroquadRenderer {
             self.logical_size = view.logical_size;
         }
         mq::set_camera(&self.camera);
+        mq::gl_use_material(&self.sampling);
         mq::clear_background(mq::Color::from_rgba(101, 97, 85, 255));
     }
 
     pub fn present(&self, view: Viewport) {
+        mq::gl_use_default_material();
         mq::set_default_camera();
         mq::clear_background(mq::BLACK);
         mq::draw_texture_ex(
@@ -119,18 +124,29 @@ impl MacroquadRenderer {
     }
 }
 impl Renderer for MacroquadRenderer {
+    fn viewport(&self) -> Option<Rect> {
+        Some(Rect::new(
+            0.0,
+            0.0,
+            self.logical_size.x,
+            self.logical_size.y,
+        ))
+    }
     fn sprite_ex(&mut self, sprite: SpriteId, position: Vec2, style: SpriteStyle) {
         self.sprite_asset(sprite).draw_ex(
             position,
             color(style.color),
             style.rotation,
             style.flip_x,
+            self.logical_size,
         );
     }
     fn bitmap_text(&mut self, text: &str, position: Vec2, tint: drawing::Color) {
-        self.assets.text(text, position.x, position.y, color(tint));
+        self.assets
+            .text(text, position.x, position.y, color(tint), self.logical_size);
     }
     fn centered_text(&mut self, text: &str, baseline: Vec2, size: u16, tint: drawing::Color) {
+        mq::gl_use_default_material();
         let width = mq::measure_text(text, None, size, 1.0).width;
         mq::draw_text(
             text,
@@ -139,9 +155,12 @@ impl Renderer for MacroquadRenderer {
             size as f32,
             color(tint),
         );
+        mq::gl_use_material(&self.sampling);
     }
     fn rectangle(&mut self, rect: Rect, tint: drawing::Color) {
+        mq::gl_use_default_material();
         mq::draw_rectangle(rect.x, rect.y, rect.w, rect.h, color(tint));
+        mq::gl_use_material(&self.sampling);
     }
 }
 fn color(color: drawing::Color) -> mq::Color {

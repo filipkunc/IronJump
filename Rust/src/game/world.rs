@@ -10,6 +10,8 @@ use crate::math::*;
 pub struct World {
     pub(super) game_objects: Vec<Box<dyn GameObject>>,
     pub(super) background_offset: Vec2,
+    previous_positions: Vec<Vec2>,
+    previous_background_offset: Option<Vec2>,
 }
 
 impl World {
@@ -17,6 +19,8 @@ impl World {
         Self {
             game_objects: Vec::new(),
             background_offset: Vec2::new(0.0, 0.0),
+            previous_positions: Vec::new(),
+            previous_background_offset: None,
         }
     }
 
@@ -61,14 +65,35 @@ impl World {
         }
     }
 
+    pub(super) fn capture_render_state(&mut self) {
+        self.previous_positions.clear();
+        self.previous_positions
+            .extend(self.game_objects.iter().map(|object| object.rect().point()));
+        self.previous_background_offset = Some(self.background_offset);
+    }
+
     pub fn draw(&self, renderer: &mut dyn Renderer, custom: bool, viewport_size: Vec2) {
+        self.draw_interpolated(renderer, custom, viewport_size, 1.0);
+    }
+
+    pub(super) fn draw_interpolated(
+        &self,
+        renderer: &mut dyn Renderer,
+        custom: bool,
+        viewport_size: Vec2,
+        alpha: f32,
+    ) {
         const TILE_SIZE: f32 = 32.0;
 
         // Align the whole grid to the render target's pixels. At half-pixel
         // positions, nearest sampling can pick atlas padding along tile edges.
         // Keep the accumulated offset fractional so slow scrolling still advances.
-        let offset_x = self.background_offset.x.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
-        let offset_y = self.background_offset.y.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
+        let background = self
+            .previous_background_offset
+            .unwrap_or(self.background_offset)
+            .lerp(self.background_offset, alpha);
+        let offset_x = background.x.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
+        let offset_y = background.y.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
         // One extra tile covers each edge while the background scrolls.
         let columns = (viewport_size.x / TILE_SIZE).ceil() as usize + 1;
         let rows = (viewport_size.y / TILE_SIZE).ceil() as usize + 1;
@@ -82,9 +107,18 @@ impl World {
         }
 
         for transparent in [false, true] {
-            for game_object in &self.game_objects {
+            for (index, game_object) in self.game_objects.iter().enumerate() {
                 if game_object.is_visible() && game_object.is_transparent() == transparent {
-                    game_object.draw(renderer);
+                    let current = game_object.rect().point();
+                    let previous = self
+                        .previous_positions
+                        .get(index)
+                        .copied()
+                        .unwrap_or(current);
+                    game_object.draw(&mut crate::drawing::translated::Translated {
+                        renderer,
+                        offset: (previous - current) * (1.0 - alpha),
+                    });
                 }
             }
         }

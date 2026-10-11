@@ -4,11 +4,22 @@ use ironjump::{
 };
 use macroquad::prelude::*;
 
+#[cfg(not(target_os = "android"))]
 pub const CONTROL_HINT: &str = "Arrows / A,D: move   Space: jump   R: restart   Esc: menu";
+#[cfg(not(target_os = "android"))]
 pub const RETURN_TO_MENU_HINT: &str = "Enter: menu";
+
+#[cfg(target_os = "android")]
+pub const CONTROL_HINT: &str = "Tilt: move   Motion / right touch: jump   Back: menu";
+#[cfg(target_os = "android")]
+pub const RETURN_TO_MENU_HINT: &str = "Tap: menu";
 
 pub fn poll(view: Viewport) -> FrameInput {
     let mut actions = Vec::new();
+    #[cfg(target_os = "android")]
+    if super::android::take_back() {
+        actions.push(Action::Back);
+    }
     for (key, action) in [
         (KeyCode::Q, Action::Quit),
         (KeyCode::Escape, Action::Back),
@@ -30,17 +41,24 @@ pub fn poll(view: Viewport) -> FrameInput {
     }
     let left = is_key_down(KeyCode::Left) || is_key_down(KeyCode::A);
     let right = is_key_down(KeyCode::Right) || is_key_down(KeyCode::D);
+    #[cfg(target_os = "android")]
+    let motion = super::android::motion_input();
+    #[cfg(not(target_os = "android"))]
+    let motion = GameInput::NONE;
     let mut game = GameInput::new(
         if left {
             -1.0
         } else if right {
             1.0
         } else {
-            0.0
+            motion.move_axis
         },
-        is_key_down(KeyCode::Up) || is_key_down(KeyCode::W) || is_key_down(KeyCode::Space),
+        motion.jump
+            || is_key_down(KeyCode::Up)
+            || is_key_down(KeyCode::W)
+            || is_key_down(KeyCode::Space),
     );
-    // Touch is translated to the same logical input as keyboard or future sensors.
+    // Touch is translated to the same logical input as keyboard or motion controls.
     for touch in touches() {
         if touch.phase == TouchPhase::Ended || touch.phase == TouchPhase::Cancelled {
             continue;

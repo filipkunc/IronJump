@@ -100,6 +100,7 @@ pub(super) fn load(xml: &str, viewport_size: Vec2) -> Result<Game, String> {
         return Err("A level must contain exactly one FPPlayer".into());
     }
     game.world.move_world(game.player.position - player_offset);
+    game.reset_interpolation();
     Ok(game)
 }
 
