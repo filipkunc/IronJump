@@ -1,6 +1,7 @@
 use super::{collision::collision_intersection, world::World};
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Color, GAME_HEIGHT, GAME_WIDTH, Renderer, SpriteId, SpriteStyle, WHITE};
+use crate::input::GameInput;
+use crate::math::*;
 
 pub struct Player {
     pub(super) position: Vec2,
@@ -25,8 +26,8 @@ impl Player {
     pub fn new() -> Self {
         Self {
             position: Vec2 {
-                x: 480.0 / 2.0 - 32.0 / 2.0,
-                y: 320.0 / 2.0 - 32.0 / 2.0,
+                x: GAME_WIDTH / 2.0 - 32.0 / 2.0,
+                y: GAME_HEIGHT / 2.0 - 32.0 / 2.0,
             },
             movement: Vec2 { x: 0.0, y: 0.0 },
             rotation: 0.0,
@@ -117,7 +118,7 @@ impl Player {
         is_colliding
     }
 
-    pub fn update(&mut self, world: &mut World, input_acceleration: Vec2) {
+    pub fn update(&mut self, world: &mut World, input: GameInput) {
         let mut move_left_or_right = false;
         if self.speed_up_counter > 0 {
             self.speed_up_counter += 1;
@@ -131,24 +132,24 @@ impl Player {
             Self::MAX_SPEED
         };
 
-        if input_acceleration.x < 0.0 {
+        if input.move_axis < 0.0 {
             if self.movement.x < 0.0 {
                 self.movement.x +=
-                    input_acceleration.x.abs() * Self::ACCELERATION * Self::CHANGE_DIRECTION_SPEED;
+                    input.move_axis.abs() * Self::ACCELERATION * Self::CHANGE_DIRECTION_SPEED;
             }
-            self.movement.x = (self.movement.x + input_acceleration.x.abs() * Self::ACCELERATION)
+            self.movement.x = (self.movement.x + input.move_axis.abs() * Self::ACCELERATION)
                 .min(current_max_speed);
             move_left_or_right = true;
-        } else if input_acceleration.x > 0.0 {
+        } else if input.move_axis > 0.0 {
             if self.movement.x > 0.0 {
                 self.movement.x -=
-                    input_acceleration.x.abs() * Self::ACCELERATION * Self::CHANGE_DIRECTION_SPEED;
+                    input.move_axis.abs() * Self::ACCELERATION * Self::CHANGE_DIRECTION_SPEED;
             }
-            self.movement.x = (self.movement.x - input_acceleration.x.abs() * Self::ACCELERATION)
+            self.movement.x = (self.movement.x - input.move_axis.abs() * Self::ACCELERATION)
                 .max(-current_max_speed);
             move_left_or_right = true;
         }
-        if !self.jumping && input_acceleration.y > 0.0 {
+        if !self.jumping && input.jump {
             if self.movement.y < Self::UP_SPEED {
                 self.movement.y = Self::UP_SPEED;
             }
@@ -181,16 +182,25 @@ impl Player {
         self.alpha = (self.alpha + 0.07) % std::f32::consts::PI;
     }
 
-    pub fn draw(&self, assets: &Assets) {
-        assets
-            .ball
-            .draw_ex(self.position, WHITE, self.rotation.to_radians(), false);
+    pub fn draw(&self, renderer: &mut dyn Renderer) {
+        renderer.sprite_ex(
+            SpriteId::Ball,
+            self.position,
+            SpriteStyle {
+                color: WHITE,
+                rotation: self.rotation.to_radians(),
+                flip_x: false,
+            },
+        );
         if self.speed_up_counter > 0 {
-            assets.speed_effect.draw_ex(
+            renderer.sprite_ex(
+                SpriteId::SpeedEffect,
                 self.position - vec2(16.0, 16.0),
-                Color::new(1.0, 1.0, 1.0, self.alpha.sin().abs() * 0.5 + 0.5),
-                0.0,
-                false,
+                SpriteStyle {
+                    color: Color::new(1.0, 1.0, 1.0, self.alpha.sin().abs() * 0.5 + 0.5),
+                    rotation: 0.0,
+                    flip_x: false,
+                },
             );
         }
     }
@@ -354,7 +364,7 @@ mod tests {
             );
             player.movement.x = speed;
 
-            player.update(&mut world, vec2(input, 0.0));
+            player.update(&mut world, GameInput::new(input, false));
             assert_eq!(player.movement.x, 0.0);
             assert_eq!(player.rotation, 0.0);
             assert_close(world.game_objects[0].rect().x, wall_x);
@@ -370,17 +380,17 @@ mod tests {
             .push(Box::new(platform_at(vec2(192.0, 176.0), 3, 1)));
 
         for _ in 0..120 {
-            player.update(&mut world, Vec2::ZERO);
+            player.update(&mut world, GameInput::NONE);
             assert!(!player.jumping);
             assert_eq!(player.movement.y, 0.0);
             assert_close(world.game_objects[0].rect().top(), 176.0);
         }
 
-        player.update(&mut world, vec2(0.0, 1.0));
+        player.update(&mut world, GameInput::new(0.0, true));
         assert!(player.jumping);
         assert!(player.movement.y > 0.0);
         for _ in 0..120 {
-            player.update(&mut world, Vec2::ZERO);
+            player.update(&mut world, GameInput::NONE);
         }
         assert!(!player.jumping);
         assert_eq!(player.movement.y, 0.0);
@@ -397,7 +407,7 @@ mod tests {
                 }
                 let mut world = World::new();
                 for _ in 0..30 {
-                    player.update(&mut world, vec2(direction, 0.0));
+                    player.update(&mut world, GameInput::new(direction, false));
                 }
                 assert!((player.movement.x + direction * expected).abs() < 0.0001);
             }

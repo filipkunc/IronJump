@@ -4,8 +4,8 @@ use super::{
     level_loader::parse_value,
     player::Player,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub(super) struct Magnet {
     position: Vec2,
@@ -31,11 +31,12 @@ impl GameObject for Magnet {
         }
         None
     }
-    fn draw(&self, assets: &Assets) {
+    fn draw(&self, renderer: &mut dyn Renderer) {
         for segment in 0..self.width_segments {
-            assets
-                .magnet
-                .draw(self.position.x + segment as f32 * 32.0, self.position.y);
+            renderer.sprite(
+                SpriteId::Magnet,
+                vec2(self.position.x + segment as f32 * 32.0, self.position.y),
+            );
         }
     }
     fn rect(&self) -> Rect {

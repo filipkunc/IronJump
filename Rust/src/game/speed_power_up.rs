@@ -4,8 +4,8 @@ use super::{
     level_loader::parse_value,
     player::Player,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub(super) struct SpeedPowerUp {
     position: Vec2,
@@ -41,8 +41,11 @@ impl GameObject for SpeedPowerUp {
         None
     }
 
-    fn draw(&self, assets: &Assets) {
-        assets.speed_power_up.draw(self.position.x, self.position.y);
+    fn draw(&self, renderer: &mut dyn Renderer) {
+        renderer.sprite(
+            SpriteId::SpeedPowerUp,
+            vec2(self.position.x, self.position.y),
+        );
     }
 
     fn move_world(&mut self, offset: Vec2) {
@@ -61,7 +64,7 @@ impl GameObject for SpeedPowerUp {
 #[cfg(test)]
 mod tests {
     use super::super::{test_support::game_with, world::World};
-    use super::*;
+    use crate::input::GameInput;
 
     #[test]
     fn speed_pickup_expires_and_respawns_after_360_ticks() {
@@ -80,10 +83,10 @@ mod tests {
 
         game.player.speed_up_counter = 1;
         for _ in 0..359 {
-            game.player.update(&mut World::new(), Vec2::ZERO);
+            game.player.update(&mut World::new(), GameInput::NONE);
         }
         assert_eq!(game.player.speed_up_counter, 360);
-        game.player.update(&mut World::new(), Vec2::ZERO);
+        game.player.update(&mut World::new(), GameInput::NONE);
         assert_eq!(game.player.speed_up_counter, 0);
     }
 }

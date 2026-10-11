@@ -1,56 +1,14 @@
+use crate::drawing::{
+    BLACK, Color, GAME_HEIGHT, GAME_WIDTH, RED, Renderer, SpriteId, SpriteStyle, WHITE,
+};
+use crate::input::GameInput;
+use crate::math::*;
+use crate::progress::Progress;
 use crate::{
-    assets::Assets,
     game::Game,
     levels::{self, CAMPAIGN_COUNT, LEVELS_PER_STAGE, Level},
 };
-use macroquad::prelude::*;
-use std::{ops::Range, path::Path};
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct Progress {
-    pub selected: usize,
-    pub unlocked: usize,
-}
-
-impl Progress {
-    pub fn load(path: &Path) -> Result<Self, String> {
-        let text = match std::fs::read_to_string(path) {
-            Ok(text) => text,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-                return Ok(Self::default());
-            }
-            Err(error) => return Err(error.to_string()),
-        };
-        let mut fields = text.split_whitespace();
-        if fields.next() != Some("ironjump-v1") {
-            return Err("Unrecognized progress file".into());
-        }
-        let selected = fields
-            .next()
-            .and_then(|s| s.parse().ok())
-            .ok_or("Invalid selected level")?;
-        let unlocked = fields
-            .next()
-            .and_then(|s| s.parse::<usize>().ok())
-            .ok_or("Invalid unlocked level")?;
-        if fields.next().is_some() {
-            return Err("Unexpected progress data".into());
-        }
-        Ok(Self {
-            selected,
-            unlocked: unlocked.min(CAMPAIGN_COUNT - 1),
-        })
-    }
-
-    pub fn save(&self, path: &Path) -> std::io::Result<()> {
-        let temporary = path.with_extension("tmp");
-        std::fs::write(
-            &temporary,
-            format!("ironjump-v1 {} {}\n", self.selected, self.unlocked),
-        )?;
-        std::fs::rename(temporary, path)
-    }
-}
+use std::ops::Range;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Mode {
@@ -71,6 +29,7 @@ pub struct Session {
     complete_ticks: u32,
     fallen_ticks: u32,
     win_animation: f32,
+    viewport_size: Vec2,
 }
 
 impl Session {
@@ -104,6 +63,7 @@ impl Session {
             complete_ticks: 0,
             fallen_ticks: 0,
             win_animation: 0.0,
+            viewport_size: vec2(GAME_WIDTH, GAME_HEIGHT),
             error: None,
         }
     }
@@ -124,8 +84,18 @@ impl Session {
         }
     }
 
+    pub fn resize(&mut self, size: Vec2) {
+        if !size.is_finite() || size.min_element() <= 0.0 {
+            return;
+        }
+        self.viewport_size = size;
+        if let Some(game) = &mut self.game {
+            game.resize(size);
+        }
+    }
+
     pub fn start(&mut self) {
-        let mut game = Game::new();
+        let mut game = Game::with_viewport(self.viewport_size);
         match game.load(&self.levels[self.progress.selected].xml) {
             Ok(()) => {
                 self.game = Some(game);
@@ -163,7 +133,7 @@ impl Session {
         }
     }
 
-    pub fn update(&mut self, input: Vec2) {
+    pub fn update(&mut self, input: GameInput) {
         if self.mode == Mode::Victory {
             self.win_animation = (self.win_animation + 0.0015).min(0.7);
             return;
@@ -227,27 +197,36 @@ impl Session {
         }
     }
 
-    pub fn draw(&self, assets: &Assets) {
+    pub fn draw(&self, renderer: &mut dyn Renderer, return_to_menu_hint: &str) {
         if let Some(game) = &self.game {
-            game.draw(assets, self.levels[self.progress.selected].custom);
+            game.draw(renderer, self.levels[self.progress.selected].custom);
             if self.mode == Mode::Victory {
-                draw_rectangle(
-                    0.0,
-                    0.0,
-                    480.0,
-                    320.0,
+                renderer.rectangle(
+                    Rect::new(0.0, 0.0, self.viewport_size.x, self.viewport_size.y),
                     Color::new(0.0, 0.0, 0.0, self.win_animation),
                 );
-                let y = 320.0 - self.win_animation * 280.0;
-                assets.win.draw(120.0, y);
+                let left = self.viewport_size.x * 0.5 - 128.0;
+                let y = self.viewport_size.y
+                    - (self.win_animation / 0.7) * (self.viewport_size.y * 0.5 + 36.0);
+                renderer.sprite(SpriteId::Win, vec2(left, y));
                 for x in 0..8 {
-                    assets.elevator[2].draw(120.0 + x as f32 * 32.0, y + 64.0);
+                    renderer.sprite(
+                        SpriteId::Elevator(2),
+                        vec2(left + x as f32 * 32.0, y + 64.0),
+                    );
                 }
-                assets.text("Enter: menu", 160.0, 275.0, WHITE);
+                renderer.bitmap_text(
+                    return_to_menu_hint,
+                    vec2(
+                        self.viewport_size.x * 0.5 - 80.0,
+                        self.viewport_size.y - 45.0,
+                    ),
+                    WHITE,
+                );
             }
             return;
         }
-        assets.menu.draw(0.0, 0.0);
+        renderer.sprite(SpriteId::Menu, vec2(0.0, 0.0));
         let custom = self.pages[self.page].start >= CAMPAIGN_COUNT;
         let stage = if custom {
             self.page - CAMPAIGN_COUNT.div_ceil(LEVELS_PER_STAGE) + 1
@@ -259,7 +238,11 @@ impl Session {
         } else {
             format!("Stage {stage}")
         };
-        assets.text(&title, if custom { 150.0 } else { 195.0 }, 75.0, WHITE);
+        renderer.bitmap_text(
+            &title,
+            vec2(if custom { 150.0 } else { 195.0 }, 75.0),
+            WHITE,
+        );
         for (slot, level) in self.pages[self.page].clone().enumerate() {
             let selected = self.progress.selected == level;
             let icon = if selected {
@@ -268,65 +251,37 @@ impl Session {
                 usize::from(self.available(level))
             };
             let point = level_position(slot);
-            assets.level_icons[icon].draw(point.x, point.y);
+            renderer.sprite(SpriteId::LevelIcon(icon), vec2(point.x, point.y));
             let number = if custom {
                 level - CAMPAIGN_COUNT + 1
             } else {
                 level + 1
             };
             let x = point.x + if number < 10 { 14.0 } else { 7.0 };
-            assets.text(
+            renderer.bitmap_text(
                 &number.to_string(),
-                x,
-                point.y + 5.0,
+                vec2(x, point.y + 5.0),
                 if selected { BLACK } else { WHITE },
             );
         }
         if self.pages[self.page].contains(&self.progress.selected) {
-            assets.play.draw(160.0, 240.0);
+            renderer.sprite(SpriteId::Play, vec2(160.0, 240.0));
             let name = &self.levels[self.progress.selected].name;
-            draw_text(
-                name,
-                240.0 - measure_text(name, None, 16, 1.0).width * 0.5,
-                236.0,
-                16.0,
-                WHITE,
-            );
+            renderer.centered_text(name, vec2(240.0, 236.0), 16, WHITE);
         }
-        assets.arrow.draw(8.0, 102.0);
-        assets.arrow.draw_ex(vec2(409.0, 102.0), WHITE, 0.0, true);
-        if self.error.is_some() {
-            assets.text("Level could not load", 100.0, 210.0, RED);
-        }
-    }
-
-    /// Draw after the game render target is presented, so small text is
-    /// rasterized at window resolution instead of enlarged from 480 × 320.
-    pub fn draw_controls(&self, view: Rect) {
-        if self.mode != Mode::Menu {
-            return;
-        }
-        let scale = view.w / 480.0;
-        let height = 18.0 * scale;
-        let top = view.bottom() - height;
-        draw_rectangle(view.x, top, view.w, height, Color::new(0.0, 0.0, 0.0, 0.85));
-
-        let text = "Arrows / A,D: move   Space: jump   R: restart   Esc: menu";
-        let font_size = (14.0 * scale).round().max(1.0) as u16;
-        let measured = measure_text(text, None, font_size, 1.0);
-        let font_scale = ((view.w - 24.0 * scale) / measured.width).min(1.0);
-        let dimensions = measure_text(text, None, font_size, font_scale);
-        draw_text_ex(
-            text,
-            view.x + (view.w - dimensions.width) * 0.5,
-            top + (height - dimensions.height) * 0.5 + dimensions.offset_y,
-            TextParams {
-                font_size,
-                font_scale,
+        renderer.sprite(SpriteId::Arrow, vec2(8.0, 102.0));
+        renderer.sprite_ex(
+            SpriteId::Arrow,
+            vec2(409.0, 102.0),
+            SpriteStyle {
                 color: WHITE,
-                ..Default::default()
+                rotation: 0.0,
+                flip_x: true,
             },
         );
+        if self.error.is_some() {
+            renderer.bitmap_text("Level could not load", vec2(100.0, 210.0), RED);
+        }
     }
 }
 
@@ -345,9 +300,33 @@ mod tests {
     fn completed_game() -> Game {
         let mut game = Game::new();
         game.load("<IronJumpLevel><FPPlayer><x>0</x><y>0</y></FPPlayer><FPExit><x>0</x><y>0</y></FPExit><FPPlatform><x>0</x><y>32</y><widthSegments>3</widthSegments><heightSegments>1</heightSegments></FPPlatform></IronJumpLevel>").unwrap();
-        game.update(Vec2::ZERO);
+        game.update(GameInput::NONE);
         assert!(game.is_complete());
         game
+    }
+
+    #[test]
+    fn viewport_survives_restart_level_changes_and_returning_from_menu() {
+        let mut session = Session::new(Progress::default(), Vec::new());
+        let size = vec2(712.0, 320.0);
+        session.resize(size);
+        session.start();
+        assert_eq!(session.game.as_ref().unwrap().viewport_size(), size);
+        session.start(); // Restart uses the same path as the platform's R action.
+        assert_eq!(session.game.as_ref().unwrap().viewport_size(), size);
+        session.next_level();
+        assert_eq!(session.progress.selected, 1);
+        assert_eq!(session.game.as_ref().unwrap().viewport_size(), size);
+        session.menu();
+        let size = vec2(320.0, 712.0);
+        session.resize(size);
+        session.start();
+        assert_eq!(session.game.as_ref().unwrap().viewport_size(), size);
+        session.resize(vec2(640.0, 320.0));
+        assert_eq!(
+            session.game.as_ref().unwrap().viewport_size(),
+            vec2(640.0, 320.0)
+        );
     }
 
     #[test]
@@ -379,10 +358,10 @@ mod tests {
         session.game = Some(completed_game());
         session.mode = Mode::Playing;
         for _ in 0..30 {
-            session.update(Vec2::ZERO);
+            session.update(GameInput::NONE);
         }
         assert_eq!(session.progress.selected, 0);
-        session.update(Vec2::ZERO);
+        session.update(GameInput::NONE);
         assert_eq!(session.progress.selected, 1);
         assert_eq!(session.progress.unlocked, 1);
         assert_eq!(session.mode, Mode::Playing);
@@ -401,12 +380,12 @@ mod tests {
         session.game = Some(completed_game());
         session.mode = Mode::Playing;
         for _ in 0..31 {
-            session.update(Vec2::ZERO);
+            session.update(GameInput::NONE);
         }
         assert_eq!(session.mode, Mode::Victory);
         assert_eq!(session.progress.selected, 29);
         for _ in 0..1000 {
-            session.update(Vec2::ZERO);
+            session.update(GameInput::NONE);
         }
         assert_eq!(session.win_animation, 0.7);
         session.menu();
@@ -422,32 +401,23 @@ mod tests {
         session.game = Some(game);
         session.mode = Mode::Playing;
         for _ in 0..30 {
-            session.update(Vec2::ZERO);
+            session.update(GameInput::NONE);
         }
         assert_eq!(session.fallen_ticks, 30);
-        session.update(Vec2::ZERO);
+        session.update(GameInput::NONE);
         assert_eq!(session.fallen_ticks, 0);
         assert_eq!(session.progress.selected, 0);
         assert!(!session.game.as_ref().unwrap().has_fallen());
     }
 
     #[test]
-    fn progress_roundtrips_and_clamps_unlocked_levels() {
-        let path =
-            std::env::temp_dir().join(format!("ironjump-progress-test-{}.txt", std::process::id()));
-        let progress = Progress {
-            selected: 12,
-            unlocked: 15,
-        };
-        progress.save(&path).unwrap();
-        assert_eq!(Progress::load(&path).unwrap(), progress);
-        std::fs::write(&path, "ironjump-v1 1000 1000").unwrap();
-        let session = Session::new(Progress::load(&path).unwrap(), Vec::new());
+    fn progress_is_clamped_to_available_levels() {
+        let session = Session::new(
+            Progress::parse("ironjump-v1 1000 1000").unwrap(),
+            Vec::new(),
+        );
         assert_eq!(session.progress.unlocked, 29);
         assert!(session.progress.selected < session.levels.len());
-        std::fs::write(&path, "broken").unwrap();
-        assert!(Progress::load(&path).is_err());
-        std::fs::remove_file(&path).unwrap();
     }
 
     #[test]
@@ -468,5 +438,44 @@ mod tests {
         assert_eq!(session.page, 0);
         session.change_page(100);
         assert_eq!(session.page, 3);
+    }
+
+    #[test]
+    fn menu_and_victory_draw_through_the_backend_contract() {
+        use crate::drawing::test_support::{Command, RecordingRenderer};
+        let mut session = Session::new(Progress::default(), Vec::new());
+        let mut renderer = RecordingRenderer::default();
+        session.draw(&mut renderer, "Tap: menu");
+        assert!(matches!(
+            renderer.commands.first(),
+            Some(Command::Sprite(SpriteId::Menu, _, _))
+        ));
+        assert_eq!(
+            renderer
+                .commands
+                .iter()
+                .filter(|command| matches!(command, Command::Sprite(SpriteId::LevelIcon(_), _, _)))
+                .count(),
+            11
+        );
+        assert!(renderer.commands.iter().any(
+            |command| matches!(command, Command::Sprite(SpriteId::Arrow, _, style) if style.flip_x)
+        ));
+        assert!(renderer.commands.iter().any(
+            |command| matches!(command, Command::CenteredText(text, _, 16, _) if text == "tutorial")
+        ));
+
+        session.game = Some(completed_game());
+        session.mode = Mode::Victory;
+        renderer.commands.clear();
+        session.draw(&mut renderer, "Tap: menu");
+        assert!(
+            renderer
+                .commands
+                .iter()
+                .any(|command| matches!(command, Command::Rectangle(_, _)))
+        );
+        assert!(matches!(renderer.commands.last(),
+            Some(Command::BitmapText(text, _, _)) if text == "Tap: menu"));
     }
 }

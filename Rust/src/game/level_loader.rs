@@ -3,7 +3,7 @@ use super::{
     movable_platform::MovablePlatform, platform::Platform, speed_power_up::SpeedPowerUp,
     trampoline::Trampoline,
 };
-use macroquad::prelude::*;
+use crate::math::*;
 use std::{fmt::Debug, str::FromStr};
 
 pub(super) fn parse_value<T: FromStr>(node: roxmltree::Node<'_, '_>, name: &str) -> T
@@ -51,12 +51,12 @@ fn validate_object(node: roxmltree::Node<'_, '_>) -> Result<(), String> {
     Ok(())
 }
 
-pub(super) fn load(xml: &str) -> Result<Game, String> {
+pub(super) fn load(xml: &str, viewport_size: Vec2) -> Result<Game, String> {
     let doc = roxmltree::Document::parse(xml).map_err(|error| error.to_string())?;
     if doc.root_element().tag_name().name() != "IronJumpLevel" {
         return Err("Expected an IronJumpLevel XML root".into());
     }
-    let mut game = Game::new();
+    let mut game = Game::with_viewport(viewport_size);
     let mut player_offset = Vec2::new(0.0, 0.0);
     let mut players = 0;
     for node in doc.root_element().children() {
@@ -107,6 +107,27 @@ pub(super) fn load(xml: &str) -> Result<Game, String> {
 mod tests {
     use super::super::test_support::game_with;
     use super::*;
+    use crate::drawing::test_support::RecordingRenderer;
+    use crate::input::GameInput;
+
+    #[test]
+    fn loading_and_reloading_center_the_player_in_the_current_viewport() {
+        let xml = "<IronJumpLevel><FPPlayer><x>96</x><y>-32</y></FPPlayer><FPDiamond><x>128</x><y>32</y></FPDiamond></IronJumpLevel>";
+        for size in [vec2(712.0, 320.0), vec2(320.0, 712.0)] {
+            let mut game = Game::with_viewport(size);
+            for _ in 0..2 {
+                game.load(xml).unwrap();
+                assert_eq!(game.viewport_size(), size);
+                assert_eq!(game.player.position + Vec2::splat(16.0), size * 0.5);
+                assert_eq!(
+                    game.world.game_objects[0].rect().point() - game.player.position,
+                    vec2(32.0, 64.0)
+                );
+                assert!(game.load("bad xml").is_err());
+                assert_eq!(game.viewport_size(), size);
+            }
+        }
+    }
 
     #[test]
     fn loading_replaces_old_state_and_rejects_invalid_levels_without_mutation() {
@@ -151,12 +172,15 @@ mod tests {
                 } else {
                     0.0
                 };
-                game.update(vec2(x, if frame % 60 < 10 { 1.0 } else { 0.0 }));
+                game.update(GameInput::new(x, frame % 60 < 10));
                 assert!(game.player.movement.is_finite(), "{}", level.name);
                 for object in &game.world.game_objects {
                     assert!(object.rect().point().is_finite(), "{}", level.name);
                 }
             }
+            let mut renderer = RecordingRenderer::default();
+            game.draw(&mut renderer, level.custom);
+            assert!(!renderer.commands.is_empty());
         }
         assert_eq!(total, 935);
     }

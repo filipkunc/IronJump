@@ -1,4 +1,4 @@
-use macroquad::prelude::Rect;
+use crate::math::Rect;
 
 // Matches rectTolerance in SharedClasses/FPGraphics.m, not the landing tolerance.
 const RECT_TOLERANCE: f32 = 0.1;

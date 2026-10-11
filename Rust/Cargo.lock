@@ -144,6 +144,7 @@ dependencies = [
 name = "ironjump"
 version = "0.1.0"
 dependencies = [
+ "glam",
  "macroquad",
  "roxmltree",
 ]

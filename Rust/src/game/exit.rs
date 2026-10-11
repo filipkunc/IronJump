@@ -4,8 +4,8 @@ use super::{
     level_loader::parse_value,
     player::Player,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub(super) struct Exit {
     position: Vec2,
@@ -31,8 +31,8 @@ impl GameObject for Exit {
         None
     }
 
-    fn draw(&self, assets: &Assets) {
-        assets.exit.draw(self.position.x, self.position.y);
+    fn draw(&self, renderer: &mut dyn Renderer) {
+        renderer.sprite(SpriteId::Exit, vec2(self.position.x, self.position.y));
     }
 
     fn move_world(&mut self, offset: Vec2) {

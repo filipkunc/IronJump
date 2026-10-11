@@ -7,5 +7,15 @@ license = "MIT"
 description = "A Rust desktop port of the IronJump iPhone game"
 
 [dependencies]
-macroquad = { version = "0.4.16", default-features = false }
+glam = "0.27"
+macroquad = { version = "0.4.16", default-features = false, optional = true }
 roxmltree = "0.21.1"
+
+[features]
+default = ["macroquad-backend"]
+macroquad-backend = ["dep:macroquad"]
+
+[[bin]]
+name = "ironjump"
+path = "src/main.rs"
+required-features = ["macroquad-backend"]

@@ -4,8 +4,8 @@ use super::{
     level_loader::parse_value,
     player::Player,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub(super) struct Trampoline {
     position: Vec2,
@@ -52,10 +52,12 @@ impl GameObject for Trampoline {
             speed: 8.0,
         })
     }
-    fn draw(&self, assets: &Assets) {
+    fn draw(&self, renderer: &mut dyn Renderer) {
         for segment in 0..self.width_segments {
-            assets.trampoline[self.texture_index as usize]
-                .draw(self.position.x + segment as f32 * 64.0, self.position.y);
+            renderer.sprite(
+                SpriteId::Trampoline(self.texture_index as usize),
+                vec2(self.position.x + segment as f32 * 64.0, self.position.y),
+            );
         }
     }
     fn rect(&self) -> Rect {

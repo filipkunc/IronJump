@@ -1,6 +1,6 @@
 # IronJump — Rust port
 
-A desktop port of the original iPhone game using Macroquad. The gameplay follows
+A Rust port of the original iPhone game with a Macroquad desktop backend. The gameplay follows
 `SharedClasses` and the campaign flow in `IronJump/Classes/EAGLView.m`. Rendering
 uses the original iPhone atlas, bitmap font, and menu artwork.
 
@@ -12,8 +12,10 @@ From the repository root:
 cargo run --manifest-path Rust/Cargo.toml
 ```
 
-A graphical desktop with an OpenGL-capable driver is required. The game renders
-at 480 × 320 and scales with letterboxing when the window is resized.
+A graphical desktop with an OpenGL-capable driver is required. Gameplay fills the window, keeping its shorter dimension at 320 logical units.
+Wider or taller screens reveal more of the level with uniformly scaled sprites.
+Resizing recenters the player without resetting the game. The original 480 × 320
+menu artwork remains centered with letterboxing.
 
 ## Controls
 
@@ -85,8 +87,16 @@ python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 
 ## Code layout
 
-- `src/main.rs`: window, desktop/touch input, fixed simulation steps, and scaling.
-- `src/session.rs`: menu, stages, progress, transitions, restart, and victory.
+- `src/lib.rs`: backend-independent library; depends only on `glam` and `roxmltree`
+  when built without default features.
+- `src/main.rs`: Macroquad entry point.
+- `src/app.rs`: semantic actions and the fixed 60 Hz simulation clock.
+- `src/input.rs`: analog steering, jump, and one-shot menu/application actions.
+- `src/session.rs`: menu, stages, transitions, restart, victory, and presentation.
+- `src/progress.rs`: progress data and its text format; no filesystem access.
+- `src/math.rs`: vectors and collision rectangles independent of the renderer.
+- `src/viewport.rs`: responsive gameplay, fitted menus, and pointer coordinate mapping.
+- `src/drawing.rs`: renderer trait, sprite identities, colors, and draw styles.
 - `src/levels.rs`: embedded campaign and development levels.
 - `src/game.rs`: game orchestration, completion checks, and HUD.
 - `src/game/`: one module per original game object: `player.rs`, `platform.rs`,
@@ -97,7 +107,11 @@ python3 tools/convert_levels.py /path/to/custom.level --output-dir /path/to/xml
 - `src/game/game_object.rs`: shared object trait, update context, and world effects.
 - `src/game/collision.rs`: shared collision geometry.
 - `src/game/level_loader.rs`: XML validation and object construction.
-- `src/assets.rs`: iPhone atlas regions, sprite drawing, font, and menu textures.
+- `src/backend.rs`: Macroquad renderer, render target, scaling, and sharp overlay text.
+- `src/backend/assets.rs`: GPU textures, atlas regions, and fonts. The rotating ball
+  uses linear filtering; tiles and the game render target use nearest filtering.
+- `src/platform.rs`: desktop runner connecting the library to input, storage, and drawing.
+- `src/platform/`: keyboard/touch translation, command-line options, and file-backed saves.
 - `src/game/test_support.rs`: shared game fixtures, compiled only for tests.
 
 Unit tests live at the bottom of the implementation file they cover, inside
@@ -111,6 +125,26 @@ again. Effects that change other bodies are applied by `World` after the current
 object borrow ends. Invisible collectibles stay in the object array, preserving
 stable indices used by elevator attachments.
 
+The game and session submit drawing through `Renderer`; their object-local `draw()`
+methods never access GPU textures or global drawing functions. A different backend
+implements that trait and supplies a runner that creates `FrameInput`, calls
+`Session::resize` with the logical viewport size, calls `App::frame`, persists
+`Progress`, and presents the frame. Sprite order, rotation in radians, font
+positioning, and logical game units (32 per tile) are part of the drawing contract.
+The viewport may change independently of the simulation; level loads retain it.
+Physical controls and their displayed hints belong to the platform adapter. On resume, a runner resets the app clock and its elapsed-time
+measurement so suspended time does not advance the simulation.
+
+Macroquad is an optional dependency behind the default `macroquad-backend` feature.
+To build and test the library without a graphics backend or display:
+
+```sh
+cargo test --offline --manifest-path Rust/Cargo.toml --no-default-features
+```
+
+This separation prepares for another backend or Android adapter; Android packaging
+and accelerometer support are not implemented yet.
+
 This ports the iPhone game runtime to the existing desktop Rust application.
 Cocoa level-editor tools, editor replay recording, and native iOS application
 packaging are outside this runtime.
@@ -121,12 +155,16 @@ packaging are outside this runtime.
 cargo fmt --manifest-path Rust/Cargo.toml --check
 cargo clippy --offline --manifest-path Rust/Cargo.toml --all-targets -- -D warnings
 cargo test --offline --manifest-path Rust/Cargo.toml
+cargo test --offline --manifest-path Rust/Cargo.toml --no-default-features
 cargo build --offline --locked --manifest-path Rust/Cargo.toml
 python3 tools/convert_levels.py --check
 ```
 
 Tests cover all object types, collision sequencing, moving platforms, power-up
-expiry, progression, persistence, and loading/simulating every converted level.
+expiry, progression, persistence, viewport mapping, and frame-rate-independent
+simulation. A recording renderer checks drawing without GPU resources, including
+layer order, collected-object visibility, menu/victory presentation, and drawing
+every converted level after simulation.
 Run one group by its module name, for example:
 
 ```sh

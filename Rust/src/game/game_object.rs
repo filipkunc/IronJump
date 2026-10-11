@@ -1,6 +1,6 @@
 use super::{elevator::Elevator, player::Player};
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::Renderer;
+use crate::math::*;
 
 pub enum WorldEffect {
     BounceMovables { surface: Rect, speed: f32 },
@@ -8,7 +8,7 @@ pub enum WorldEffect {
 
 pub trait GameObject {
     fn update(&mut self, context: &UpdateContext<'_>);
-    fn draw(&self, assets: &Assets);
+    fn draw(&self, renderer: &mut dyn Renderer);
     fn move_world(&mut self, offset: Vec2);
     fn rect(&self) -> Rect;
 

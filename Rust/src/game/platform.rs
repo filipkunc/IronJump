@@ -2,8 +2,8 @@ use super::{
     game_object::{GameObject, UpdateContext},
     level_loader::parse_value,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub struct Platform {
     position: Vec2,
@@ -43,12 +43,15 @@ impl GameObject for Platform {
 
     fn update(&mut self, _context: &UpdateContext<'_>) {}
 
-    fn draw(&self, assets: &Assets) {
+    fn draw(&self, renderer: &mut dyn Renderer) {
         for iy in 0..self.height_segments {
             for ix in 0..self.width_segments {
-                assets.platform.draw(
-                    self.position.x + (ix as f32) * 32.0,
-                    self.position.y + (iy as f32) * 32.0,
+                renderer.sprite(
+                    SpriteId::Platform,
+                    vec2(
+                        self.position.x + (ix as f32) * 32.0,
+                        self.position.y + (iy as f32) * 32.0,
+                    ),
                 );
             }
         }

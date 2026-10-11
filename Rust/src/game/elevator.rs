@@ -5,8 +5,8 @@ use super::{
     player::Player,
     world::World,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub struct Elevator {
     position: Vec2,
@@ -77,10 +77,12 @@ impl GameObject for Elevator {
     // while scrolling the world or resolving player collisions.
     fn update(&mut self, _context: &UpdateContext<'_>) {}
 
-    fn draw(&self, assets: &Assets) {
+    fn draw(&self, renderer: &mut dyn Renderer) {
         for segment in 0..self.width_segments {
-            assets.elevator[self.texture_index]
-                .draw(self.position.x + segment as f32 * 32.0, self.position.y);
+            renderer.sprite(
+                SpriteId::Elevator(self.texture_index),
+                vec2(self.position.x + segment as f32 * 32.0, self.position.y),
+            );
         }
     }
 
@@ -266,6 +268,7 @@ mod tests {
         test_support::{distant_player, movable_at, platform_at, player_at},
     };
     use super::*;
+    use crate::input::GameInput;
 
     fn elevator(position: Vec2, end: Vec2) -> Elevator {
         Elevator {
@@ -533,7 +536,7 @@ mod tests {
         // Exercise the same object-then-player update sequence as the running game.
         for _ in 0..240 {
             game.world.update(&mut game.player);
-            game.player.update(&mut game.world, Vec2::ZERO);
+            game.player.update(&mut game.world, GameInput::NONE);
         }
         assert!(game.player.position.is_finite());
         for object in &game.world.game_objects {

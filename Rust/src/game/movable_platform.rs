@@ -3,8 +3,8 @@ use super::{
     game_object::{GameObject, UpdateContext},
     level_loader::parse_value,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 pub struct MovablePlatform {
     position: Vec2,
@@ -97,12 +97,15 @@ impl GameObject for MovablePlatform {
         self.collision_up_down(context);
     }
 
-    fn draw(&self, assets: &Assets) {
+    fn draw(&self, renderer: &mut dyn Renderer) {
         for iy in 0..self.height_segments {
             for ix in 0..self.width_segments {
-                assets.movable.draw(
-                    self.position.x + (ix as f32) * 32.0,
-                    self.position.y + (iy as f32) * 32.0,
+                renderer.sprite(
+                    SpriteId::Movable,
+                    vec2(
+                        self.position.x + (ix as f32) * 32.0,
+                        self.position.y + (iy as f32) * 32.0,
+                    ),
                 );
             }
         }

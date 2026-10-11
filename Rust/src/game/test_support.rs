@@ -6,8 +6,8 @@ use super::{
     player::Player,
     world::World,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::Renderer;
+use crate::math::*;
 
 struct TestObject {
     rect: Rect,
@@ -17,7 +17,7 @@ struct TestObject {
 
 impl GameObject for TestObject {
     fn update(&mut self, _context: &UpdateContext<'_>) {}
-    fn draw(&self, _assets: &Assets) {}
+    fn draw(&self, _renderer: &mut dyn Renderer) {}
 
     fn move_world(&mut self, offset: Vec2) {
         self.rect = self.rect.offset(offset);

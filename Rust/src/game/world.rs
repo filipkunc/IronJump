@@ -3,14 +3,12 @@ use super::{
     game_object::{GameObject, UpdateContext, WorldEffect},
     player::Player,
 };
-use crate::assets::Assets;
-use macroquad::prelude::*;
+use crate::drawing::{Renderer, SpriteId};
+use crate::math::*;
 
 // The player lives outside World so both can be borrowed mutably during updates.
 pub struct World {
     pub(super) game_objects: Vec<Box<dyn GameObject>>,
-    width: f32,
-    height: f32,
     pub(super) background_offset: Vec2,
 }
 
@@ -18,8 +16,6 @@ impl World {
     pub fn new() -> Self {
         Self {
             game_objects: Vec::new(),
-            width: 480.0,
-            height: 320.0,
             background_offset: Vec2::new(0.0, 0.0),
         }
     }
@@ -65,7 +61,7 @@ impl World {
         }
     }
 
-    pub fn draw(&self, assets: &Assets, custom: bool) {
+    pub fn draw(&self, renderer: &mut dyn Renderer, custom: bool, viewport_size: Vec2) {
         const TILE_SIZE: f32 = 32.0;
 
         // Align the whole grid to the render target's pixels. At half-pixel
@@ -74,21 +70,21 @@ impl World {
         let offset_x = self.background_offset.x.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
         let offset_y = self.background_offset.y.round().rem_euclid(TILE_SIZE) - TILE_SIZE;
         // One extra tile covers each edge while the background scrolls.
-        let columns = (self.width / TILE_SIZE).ceil() as usize + 1;
-        let rows = (self.height / TILE_SIZE).ceil() as usize + 1;
+        let columns = (viewport_size.x / TILE_SIZE).ceil() as usize + 1;
+        let rows = (viewport_size.y / TILE_SIZE).ceil() as usize + 1;
 
         for row in 0..rows {
             for column in 0..columns {
                 let x = column as f32 * TILE_SIZE + offset_x;
                 let y = row as f32 * TILE_SIZE + offset_y;
-                assets.background[usize::from(!custom)].draw(x, y);
+                renderer.sprite(SpriteId::Background(usize::from(!custom)), vec2(x, y));
             }
         }
 
         for transparent in [false, true] {
             for game_object in &self.game_objects {
                 if game_object.is_visible() && game_object.is_transparent() == transparent {
-                    game_object.draw(assets);
+                    game_object.draw(renderer);
                 }
             }
         }
@@ -123,6 +119,29 @@ mod tests {
         add_object, assert_close, distant_player, game_with, movable_at,
     };
     use super::*;
+
+    #[test]
+    fn background_covers_wide_and_tall_viewports_while_scrolling() {
+        use crate::drawing::test_support::{Command, RecordingRenderer};
+        for size in [vec2(711.12, 320.0), vec2(320.0, 711.12)] {
+            for offset in [Vec2::ZERO, vec2(-123.5, 127.7), vec2(31.4, -31.8)] {
+                let mut world = World::new();
+                world.background_offset = offset;
+                let mut renderer = RecordingRenderer::default();
+                world.draw(&mut renderer, false, size);
+                let mut minimum = Vec2::splat(f32::INFINITY);
+                let mut maximum = Vec2::splat(f32::NEG_INFINITY);
+                for command in renderer.commands {
+                    if let Command::Sprite(SpriteId::Background(_), position, _) = command {
+                        minimum = minimum.min(position);
+                        maximum = maximum.max(position + Vec2::splat(32.0));
+                    }
+                }
+                assert!(minimum.cmple(Vec2::ZERO).all());
+                assert!(maximum.cmpge(size).all());
+            }
+        }
+    }
 
     #[test]
     fn world_update_excludes_self_and_non_platforms_from_collision_context() {

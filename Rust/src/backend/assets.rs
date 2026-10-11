@@ -19,18 +19,8 @@ impl Sprite {
         Self::region(&texture, 0.0, 0.0, texture.width(), texture.height())
     }
 
-    pub fn draw(&self, x: f32, y: f32) {
-        self.draw_ex(vec2(x, y), WHITE, 0.0, false);
-    }
-
     pub fn draw_ex(&self, position: Vec2, color: Color, rotation: f32, flip_x: bool) {
-        if position.x > 480.0
-            || position.y > 320.0
-            || position.x + self.source.w < 0.0
-            || position.y + self.source.h < 0.0
-        {
-            return;
-        }
+        // The active camera clips to its viewport, including rotated sprites.
         draw_texture_ex(
             &self.texture,
             position.x,
@@ -69,14 +59,14 @@ pub struct Assets {
 
 impl Assets {
     pub fn new() -> Self {
-        let atlas = texture(include_bytes!("../../IronJump/Images/levelatlas.png"));
+        let atlas = texture(include_bytes!("../../../IronJump/Images/levelatlas.png"));
         let tile = |x, y, w, h| Sprite::region(&atlas, x, y, w, h);
         // The rotating ball needs smooth sampling. A separate texture keeps its
         // filter independent of the nearest-filtered tiles in the shared atlas.
-        let ball = Sprite::image(include_bytes!("../../IronJump/Images/atlas/ball.png"));
+        let ball = Sprite::image(include_bytes!("../../../IronJump/Images/atlas/ball.png"));
         ball.texture.set_filter(FilterMode::Linear);
         let mut font_image = Image::from_file_with_format(
-            include_bytes!("../../IronJump/Images/AndaleMono.png"),
+            include_bytes!("../../../IronJump/Images/AndaleMono.png"),
             Some(ImageFormat::Png),
         )
         .unwrap();
@@ -107,15 +97,15 @@ impl Assets {
             speed_power_up: tile(1.0, 34.0, 32.0, 32.0),
             exit: tile(67.0, 34.0, 64.0, 64.0),
             speed_effect: tile(132.0, 34.0, 64.0, 64.0),
-            menu: Sprite::image(include_bytes!("../../IronJump/Images/menu.png")),
+            menu: Sprite::image(include_bytes!("../../../IronJump/Images/menu.png")),
             level_icons: [
-                Sprite::image(include_bytes!("../../IronJump/Images/Level_black.png")),
-                Sprite::image(include_bytes!("../../IronJump/Images/Level_blue.png")),
-                Sprite::image(include_bytes!("../../IronJump/Images/Level_shine.png")),
+                Sprite::image(include_bytes!("../../../IronJump/Images/Level_black.png")),
+                Sprite::image(include_bytes!("../../../IronJump/Images/Level_blue.png")),
+                Sprite::image(include_bytes!("../../../IronJump/Images/Level_shine.png")),
             ],
-            arrow: Sprite::image(include_bytes!("../../IronJump/Images/arrow.png")),
-            play: Sprite::image(include_bytes!("../../IronJump/Images/play.png")),
-            win: Sprite::image(include_bytes!("../../IronJump/Images/win.png")),
+            arrow: Sprite::image(include_bytes!("../../../IronJump/Images/arrow.png")),
+            play: Sprite::image(include_bytes!("../../../IronJump/Images/play.png")),
+            win: Sprite::image(include_bytes!("../../../IronJump/Images/win.png")),
             font,
         }
     }
